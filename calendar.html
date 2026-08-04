@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>holiday planner — magic soul travel</title>
+  <meta name="description" content="Plan your year — colour-coded holiday planner calendar.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper" id="calendar-app">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>holiday planner</h2>
+        <p class="hint">click a day to mark it · colours save right in your browser</p>
+
+        <div class="planner-toolbar">
+          <span id="year-select-wrap"></span>
+
+          <span class="planner-stat">days off: <span id="days-off-count">0</span></span>
+          <span class="planner-stat">total: <span id="total-off-count">0</span></span>
+
+          <span class="planner-stat">color:</span>
+          <span class="color-btns" id="color-buttons"></span>
+          <span id="color-preview" style="width:22px;height:22px;border:1px solid #333;border-radius:4px;display:inline-block;background:#ff0000;"></span>
+
+          <label style="display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="two-color-checkbox"> 2 colors
+          </label>
+        </div>
+
+        <div class="planner-actions">
+          <button type="button" class="btn btn-outline btn-sm" id="pick-color-btn">pick color</button>
+          <button type="button" class="btn btn-outline btn-sm" id="default-btn">default</button>
+          <button type="button" class="btn btn-outline btn-sm" id="clear-btn">clear</button>
+          <button type="button" class="btn btn-outline btn-sm" id="export-btn">saved count</button>
+        </div>
+
+        <div class="calendar-grid" id="calendar-container"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/planner.js"></script>
+</body>
+</html>

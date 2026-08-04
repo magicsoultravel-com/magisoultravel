@@ -1,0 +1,43 @@
+[
+  {
+    "id": "barbados-four-squares-distillery",
+    "file": "assets/gpx/barbados-four-squares-distillery.gpx",
+    "title": "Barbados Four Squares Distillery",
+    "date": "2025-03-10",
+    "activity": "flight",
+    "description": "Flight track over Barbados, Four Squares Distillery area."
+  },
+  {
+    "id": "castries-to-rodney-bay",
+    "file": "assets/gpx/castries-to-rodney-bay.gpx",
+    "title": "Castries to Rodney Bay",
+    "date": "2025-03-02",
+    "activity": "flight",
+    "description": "Flight track from Castries out to Rodney Bay, St Lucia."
+  },
+  {
+    "id": "le-diamant-flight",
+    "file": "assets/gpx/le-diamant-flight.gpx",
+    "title": "Le Diamant Flight",
+    "date": "2025-03-06",
+    "activity": "flight",
+    "description": "Flight track around Le Diamant, Martinique.",
+    "related_video": "https://www.youtube.com/watch?v=QZnMqHw9xWY"
+  },
+  {
+    "id": "christ-church-flight",
+    "file": "assets/gpx/christ-church-flight.gpx",
+    "title": "Christ Church Flight",
+    "date": "2025-02-27",
+    "activity": "flight",
+    "description": "Flight track over Christ Church, Barbados."
+  },
+  {
+    "id": "castries-to-fdf",
+    "file": "assets/gpx/castries-to-fdf.gpx",
+    "title": "Castries to FDF",
+    "date": "2025-03-03",
+    "activity": "flight",
+    "description": "Flight track from Castries, St Lucia to Fort-de-France, Martinique."
+  }
+]

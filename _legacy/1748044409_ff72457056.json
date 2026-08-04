@@ -1,0 +1,25 @@
+<?php
+$packingFile = __DIR__ . '/../content/packing-list.json';
+$packing = json_decode(file_get_contents($packingFile), true);
+?>
+
+<div class="section">
+  <h2>never forget packing list</h2>
+<button type="button" style="position: absolute; top: 0; right: 0;" onclick="toggleCollapse(this)">+</button>
+  <table>
+    <thead>
+      <tr>
+        <th>group</th>
+        <th>items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($packing as $group => $data): ?>
+        <tr>
+          <td><?= htmlspecialchars($group) ?></td>
+          <td><?= htmlspecialchars($data['items']) ?></td>
+        </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>

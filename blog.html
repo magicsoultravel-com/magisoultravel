@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>blog — magic soul travel</title>
+  <meta name="description" content="Travel research — airlines, ferries, hurricane seasons, time zones in the Lesser Antilles.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>blog</h2>
+        <p class="hint">lesser antilles travel research — click a post to read more</p>
+        <div id="blog-posts"><div class="loading">loading posts</div></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('blog-posts');
+      if (!container) return;
+
+      let posts = [];
+      try {
+        posts = await (await fetch('assets/data/blog.json')).json();
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } catch (e) {
+        container.innerHTML = '<div class="loading">could not load posts</div>';
+        return;
+      }
+
+      if (posts.length === 0) {
+        container.innerHTML = '<p class="text-dim">no posts yet — check back soon</p>';
+        return;
+      }
+
+      function renderContent(html) {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        div.querySelectorAll('script').forEach(s => s.remove());
+        div.querySelectorAll('a').forEach(a => {
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener noreferrer');
+        });
+        return div.innerHTML;
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        return String(str).replace(/"/g, '"');
+      }
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      container.innerHTML = posts.map(post => `
+        <article class="post-item" data-id="${escapeAttr(post.id)}">
+          <span class="post-date">${formatDate(post.date)}</span>
+          <h2>${escapeHtml(post.title)}</h2>
+          <div class="post-content">
+            <div class="post-summary">${renderContent(post.content)}</div>
+            <div class="post-full">${renderContent(post.content)}</div>
+          </div>
+          <p><a href="#" class="read-more-toggle">read more...</a></p>
+        </article>
+      `).join('');
+
+      // Read more toggling
+      document.querySelectorAll('.read-more-toggle').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          const post = btn.closest('.post-item');
+          const isExpanded = post.classList.contains('expanded');
+
+          document.querySelectorAll('.post-item.expanded').forEach(other => {
+            if (other !== post) {
+              other.classList.remove('expanded');
+              other.querySelector('.read-more-toggle').textContent = 'read more...';
+            }
+          });
+
+          if (!isExpanded) {
+            post.classList.add('expanded');
+            btn.textContent = 'show less...';
+          } else {
+            post.classList.remove('expanded');
+            btn.textContent = 'read more...';
+          }
+        });
+      });
+
+      function checkOverflow() {
+        document.querySelectorAll('.post-summary').forEach(summary => {
+          const toggle = summary.closest('.post-item').querySelector('.read-more-toggle');
+          if (!toggle) return;
+          toggle.style.display = summary.scrollHeight > summary.clientHeight ? 'block' : 'none';
+        });
+      }
+      window.addEventListener('load', checkOverflow);
+      window.addEventListener('resize', checkOverflow);
+      setTimeout(checkOverflow, 200);
+    });
+  </script>
+</body>
+</html>

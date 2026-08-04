@@ -1,0 +1,80 @@
+{
+    "exif": {
+        "FILE": {
+            "FileName": "1757362719_84ef3933bf.jpg",
+            "FileDateTime": 1757362719,
+            "FileSize": 2416366,
+            "FileType": 2,
+            "MimeType": "image\/jpeg",
+            "SectionsFound": "ANY_TAG, IFD0, THUMBNAIL, EXIF"
+        },
+        "COMPUTED": {
+            "html": "width=\"4000\" height=\"1868\"",
+            "Height": 1868,
+            "Width": 4000,
+            "IsColor": 1,
+            "ByteOrderMotorola": 0,
+            "ApertureFNumber": "f\/1.7",
+            "Thumbnail.FileType": 2,
+            "Thumbnail.MimeType": "image\/jpeg",
+            "Thumbnail.Height": 238,
+            "Thumbnail.Width": 512
+        },
+        "IFD0": {
+            "ImageWidth": 4000,
+            "ImageLength": 1868,
+            "Make": "samsung",
+            "Model": "Galaxy S23 Ultra",
+            "Orientation": 1,
+            "XResolution": "72\/1",
+            "YResolution": "72\/1",
+            "ResolutionUnit": 2,
+            "Software": "S918BXXS8CYBD",
+            "DateTime": "2025:05:01 15:44:50",
+            "YCbCrPositioning": 1,
+            "Exif_IFD_Pointer": 234
+        },
+        "THUMBNAIL": {
+            "ImageWidth": 512,
+            "ImageLength": 238,
+            "Compression": 6,
+            "XResolution": "72\/1",
+            "YResolution": "72\/1",
+            "ResolutionUnit": 2,
+            "JPEGInterchangeFormat": 858,
+            "JPEGInterchangeFormatLength": 44989
+        },
+        "EXIF": {
+            "ExposureTime": "1\/1061",
+            "FNumber": "170\/100",
+            "ExposureProgram": 2,
+            "ISOSpeedRatings": 10,
+            "ExifVersion": "0220",
+            "DateTimeOriginal": "2025:05:01 15:44:50",
+            "DateTimeDigitized": "2025:05:01 15:44:50",
+            "UndefinedTag:0x9010": "+02:00",
+            "UndefinedTag:0x9011": "+02:00",
+            "ShutterSpeedValue": "1\/1061",
+            "ApertureValue": "153\/100",
+            "BrightnessValue": "911\/100",
+            "ExposureBiasValue": "-80\/100",
+            "MaxApertureValue": "153\/100",
+            "MeteringMode": 3,
+            "Flash": 0,
+            "FocalLength": "630\/100",
+            "SubSecTime": "311",
+            "SubSecTimeOriginal": "311",
+            "SubSecTimeDigitized": "311",
+            "FlashPixVersion": "0100",
+            "ColorSpace": 65535,
+            "ExifImageWidth": 4000,
+            "ExifImageLength": 1868,
+            "ExposureMode": 0,
+            "WhiteBalance": 0,
+            "DigitalZoomRatio": "100\/100",
+            "FocalLengthIn35mmFilm": 23,
+            "SceneCaptureType": 0,
+            "ImageUniqueID": "EK0XLPE00VM"
+        }
+    }
+}

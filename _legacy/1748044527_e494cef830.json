@@ -1,0 +1,44 @@
+<section id="playlists">
+    <h1>playlists</h1>
+    <ul class="playlist-grid" id="playlist-links"></ul>
+    <br><br>
+</section>
+
+<script>
+    const playlistUrl = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=10&key=${apiKey}`;
+
+    fetch(playlistUrl)
+        .then(response => response.json())
+        .then(data => {
+            const list = document.getElementById('playlist-links');
+            data.items.forEach(playlist => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('playlist-item');
+
+                const link = document.createElement('a');
+                link.href = `https://www.youtube.com/playlist?list=${playlist.id}&playnext=1&autoplay=1`;
+                link.classList.add('playlist-link');
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+
+                const thumbnail = document.createElement('img');
+                thumbnail.src = playlist.snippet.thumbnails.medium.url; // Use 'medium' quality, adjust as needed
+                thumbnail.alt = playlist.snippet.title;
+                thumbnail.classList.add('playlist-thumbnail');
+
+                const infoDiv = document.createElement('div');
+                infoDiv.classList.add('playlist-info');
+
+                const titleHeading = document.createElement('h3');
+                titleHeading.textContent = playlist.snippet.title;
+                titleHeading.classList.add('playlist-title');
+
+                infoDiv.appendChild(titleHeading);
+                link.appendChild(thumbnail);
+                link.appendChild(infoDiv);
+                listItem.appendChild(link);
+                list.appendChild(listItem);
+            });
+        })
+        .catch(err => console.error('YouTube Playlist API Error:', err));
+</script>

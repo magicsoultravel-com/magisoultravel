@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>magic soul travel — see the colours, hear the sounds, feel the atmosphere</title>
+  <meta name="description" content="Magic Soul Travel — Caribbean adventures, flight tracks, carnival mood, island hopping and travel planning.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Header injected by layout.js -->
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+
+    <section class="hero">
+      <h1>magic soul travel</h1>
+      <p class="tagline">see the colours, hear the sounds, feel the atmosphere</p>
+      <p class="tagline-langs">魔法灵魂旅行 &nbsp;·&nbsp; رحلة سحرية للروح &nbsp;·&nbsp; μαγικό ταξίδι ψυχής &nbsp;·&nbsp; जादुई आत्मा यात्रा &nbsp;·&nbsp; 魂の魔法の旅</p>
+    </section>
+
+    <div class="sections-wrapper">
+
+      <section class="section">
+        <h2>the journey</h2>
+        <p class="hint">island hopper's wanderings through the lesser antilles & beyond</p>
+        <div class="card-grid" id="preview-cards"></div>
+      </section>
+
+      <section class="section">
+        <h2>latest from the channel</h2>
+        <p class="hint">fresh off the youtube — carnival, planes & paradise</p>
+        <div class="video-grid" id="index-videos"></div>
+      </section>
+
+      <section class="section">
+        <h2>quick planner</h2>
+        <p class="hint">colour your days off, track the year ahead</p>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-body">
+              <h3>holiday planner</h3>
+              <p class="card-meta">colour-coded calendar, saved right in your browser</p>
+              <div class="card-actions">
+                <a href="calendar.html" class="btn">open planner</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer injected by layout.js -->
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Page preview cards
+      const links = [
+        { href: 'trips.html', title: 'trips', meta: 'gpx flight tracks over the lesser antilles', desc: 'le diamant, castries, barbados — red lines across the maps' },
+        { href: 'gallery.html', title: 'gallery', meta: 'photos & moments', desc: 'sun, sea and everything in between' },
+        { href: 'blog.html', title: 'blog', meta: 'travel research', desc: 'airlines, ferries, hurricane seasons, time zones' },
+        { href: 'videos.html', title: 'videos', meta: 'youtube', desc: 'carnival energy, plane spotting & island sounds' }
+      ];
+      const grid = document.getElementById('preview-cards');
+      grid.innerHTML = links.map(l => `
+        <div class="card">
+          <div class="card-body">
+            <h3><a href="${l.href}">${l.title}</a></h3>
+            <p class="card-meta">${l.meta}</p>
+            <p>${l.desc}</p>
+            <div class="card-actions">
+              <a href="${l.href}" class="btn btn-sm">explore</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Latest videos preview
+      fetch('assets/data/videos.json')
+        .then(r => r.json())
+        .then(videos => {
+          const wrap = document.getElementById('index-videos');
+          wrap.innerHTML = videos.slice(0, 6).map(v => `
+            <div class="video-item">
+              <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${v.title.replace(/"/g, '"')}" loading="lazy" allowfullscreen></iframe>
+              <div class="video-title">${v.title}</div>
+            </div>
+          `).join('');
+        })
+        .catch(() => {
+          document.getElementById('index-videos').innerHTML = '<p class="text-dim">videos unavailable right now</p>';
+        });
+    });
+  </script>
+</body>
+</html>

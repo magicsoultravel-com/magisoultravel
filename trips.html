@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trips — magic soul travel</title>
+  <meta name="description" content="GPX flight tracks over the Lesser Antilles — Le Diamant, Castries, Barbados and more.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">click title to expand · track rendered with the red line</p>
+        <div class="carousel-container" id="trips-carousel">
+          <button class="carousel-control prev-btn" aria-label="Previous"><</button>
+          <div class="carousel-inner" id="trips-inner"></div>
+          <div class="carousel-dots"></div>
+          <button class="carousel-control next-btn" aria-label="Next">></button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const inner = document.getElementById('trips-inner');
+      if (!inner) return;
+
+      let trips = [];
+      try {
+        trips = await (await fetch('assets/data/trips.json')).json();
+      } catch (e) {
+        inner.innerHTML = '<div class="loading">could not load trips</div>';
+        return;
+      }
+
+      if (trips.length === 0) {
+        inner.innerHTML = '<div class="loading">no trips yet</div>';
+        return;
+      }
+
+      // Group into slides of 2
+      const itemsPerGroup = 2;
+      const groups = [];
+      for (let i = 0; i < trips.length; i += itemsPerGroup) {
+        groups.push(trips.slice(i, i + itemsPerGroup));
+      }
+
+      inner.innerHTML = groups.map((group, gi) => `
+        <div class="carousel-group" data-group="${gi}">
+          ${group.map((trip, ti) => {
+            const globalIndex = gi * itemsPerGroup + ti;
+            return `
+            <div class="trip-card">
+              <h3><a href="#" data-trip-id="${trip.id}">${trip.title}</a></h3>
+              <p class="trip-meta">date: ${trip.date || '—'} · ${trip.activity || ''}</p>
+              <p class="gpx-description">${trip.description || ''}</p>
+              <div id="map-${trip.id}" class="gpx-map"></div>
+              ${trip.related_video ? `<p class="trip-meta"><a href="${trip.related_video}" target="_blank" rel="noopener noreferrer">related video ↗</a></p>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('');
+
+      // Detail modal-ish expand: clicking title toggles a "trip epic" panel
+      document.querySelectorAll('[data-trip-id]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const trip = trips.find(t => t.id === a.dataset.tripId);
+          if (!trip) return;
+          const card = a.closest('.trip-card');
+          let epic = card.querySelector('.trip-epic');
+          if (epic) {
+            epic.remove();
+            return;
+          }
+          epic = document.createElement('p');
+          epic.className = 'trip-epic';
+          epic.textContent = trip.trip_epic || 'no trip notes for this one yet';
+          card.appendChild(epic);
+        });
+      });
+
+      // Init carousel then lazy-render maps on slide change
+      const container = document.getElementById('trips-carousel');
+      const carousel = MST.initCarousel(container);
+
+      function renderVisible(groupEl) {
+        groupEl.querySelectorAll('.gpx-map').forEach(mapDiv => {
+          const id = mapDiv.id.replace('map-', '');
+          const trip = trips.find(t => t.id === id);
+          if (trip) {
+            MST_MAPS.renderTrack(mapDiv.id, trip.file);
+          }
+        });
+      }
+
+      container.addEventListener('carousel:change', (e) => {
+        renderVisible(e.detail.group);
+      });
+
+      // Initial render
+      const firstGroup = container.querySelector('.carousel-group');
+      if (firstGroup) renderVisible(firstGroup);
+    });
+  </script>
+</body>
+</html>

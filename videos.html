@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>videos — magic soul travel</title>
+  <meta name="description" content="Latest videos from the magic soul travel YouTube channel.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>latest videos</h2>
+        <p class="hint">
+          direct from the channel — to update, edit <code>assets/data/videos.json</code> with your latest ids
+        </p>
+        <div style="margin-bottom:16px;">
+          <a class="btn" href="https://www.youtube.com/@magicsoultravel" target="_blank" rel="noopener noreferrer">visit the channel ↗</a>
+        </div>
+        <div class="video-grid" id="video-grid"><div class="loading">loading videos</div></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const grid = document.getElementById('video-grid');
+
+      let videos = [];
+      try {
+        videos = await (await fetch('assets/data/videos.json')).json();
+      } catch (e) {
+        grid.innerHTML = '<p class="text-dim">could not load videos</p>';
+        return;
+      }
+
+      if (videos.length === 0) {
+        grid.innerHTML = '<p class="text-dim">no videos yet</p>';
+        return;
+      }
+
+      grid.innerHTML = videos
+        .filter(v => v.type !== 'channel')
+        .map(v => `
+          <div class="video-item">
+            <iframe
+              src="https://www.youtube.com/embed/${v.videoId}"
+              title="${escapeAttr(v.title)}"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+            <div class="video-title">${escapeHtml(v.title)}</div>
+          </div>
+        `).join('');
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        return String(str).replace(/"/g, '"');
+      }
+    });
+  </script>
+</body>
+</html>

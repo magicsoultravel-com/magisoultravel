@@ -1,0 +1,269 @@
+<?php
+// inc/timezone_banner.php
+
+// Set the default timezone for your server (important for consistent time handling).
+// For production, it's best to set this in php.ini.
+// This line acts as a fallback if not set globally.
+if (!ini_get('date.timezone')) {
+    date_default_timezone_set('Europe/Warsaw'); // Example: Set to your server's location
+}
+
+/**
+ * Generates a Unicode flag emoji from a two-letter country code.
+ * Requires mbstring extension (usually enabled by default).
+ *
+ * @param string $country_code Two-letter ISO country code (e.g., 'US', 'PL').
+ * @return string The flag emoji or empty string if invalid code.
+ */
+function get_flag_emoji($country_code) {
+    if (empty($country_code) || strlen($country_code) !== 2) {
+        return '';
+    }
+    $country_code = strtoupper($country_code); // Ensure uppercase for consistent conversion
+    $char1 = mb_chr(0x1F1E6 + (ord($country_code[0]) - ord('A')), 'UTF-8');
+    $char2 = mb_chr(0x1F1E6 + (ord($country_code[1]) - ord('A')), 'UTF-8');
+    return $char1 . $char2;
+}
+
+/**
+ * Formats a UTC offset in seconds to a shorter notation (e.g., '+5h', '-3.5h').
+ *
+ * @param int $offset_seconds The UTC offset in seconds.
+ * @return string The formatted offset string.
+ */
+function format_short_offset($offset_seconds) {
+    $offset_hours = $offset_seconds / 3600;
+
+    // Use a small epsilon to handle floating point inaccuracies for exactly 0
+    if (abs($offset_hours) < 0.0001) { // Check if close to zero
+        return '0h';
+    } elseif ($offset_hours == floor($offset_hours)) {
+        // Whole hours: e.g., +5h, -4h
+        return sprintf('%+dh', $offset_hours);
+    } else {
+        // Half hours: e.g., +5.5h, -3.5h
+        // Use .1f for one decimal place, then ensure decimal separator is a dot
+        $formatted = sprintf('%+.1fh', $offset_hours);
+        return str_replace(',', '.', $formatted); // Replace comma with dot if locale uses comma
+    }
+}
+
+
+// Define the timezones, their IDs, and country codes for flag emojis.
+// Ordered approximately from East to West.
+$timezones = [
+    // Far East / Oceania
+    'wellington'  => ['id' => 'Pacific/Auckland', 'country_code' => 'NZ'],
+    'sydney'      => ['id' => 'Australia/Sydney', 'country_code' => 'AU'],
+    'tokyo'       => ['id' => 'Asia/Tokyo', 'country_code' => 'JP'],
+    'shanghai'    => ['id' => 'Asia/Shanghai', 'country_code' => 'CN'],
+    'jakarta'     => ['id' => 'Asia/Jakarta', 'country_code' => 'ID'],
+    'new delhi'   => ['id' => 'Asia/Kolkata', 'country_code' => 'IN'],
+
+    // Middle East / Africa / Europe (moving West) - NEW CITIES ADDED HERE
+    'karachi'     => ['id' => 'Asia/Karachi', 'country_code' => 'PK'],     // UTC+5
+    'abu dhabi'   => ['id' => 'Asia/Dubai', 'country_code' => 'AE'],       // UTC+4
+    'istanbul'    => ['id' => 'Europe/Istanbul', 'country_code' => 'TR'], // UTC+3
+    'cairo'       => ['id' => 'Africa/Cairo', 'country_code' => 'EG'],     // UTC+2
+    'warsaw'      => ['id' => 'Europe/Warsaw', 'country_code' => 'PL'],
+    'london'      => ['id' => 'Europe/London', 'country_code' => 'GB'],
+
+    // Reference / Global Time
+    'utc'         => ['id' => 'UTC', 'country_code' => ''],
+
+    // Americas (moving West)
+    'bridgetown'  => ['id' => 'America/Barbados', 'country_code' => 'BB'],
+    'new york'    => ['id' => 'America/New_York', 'country_code' => 'US'],
+    'los angeles' => ['id' => 'America/Los_Angeles', 'country_code' => 'US'],
+    'honolulu'    => ['id' => 'Pacific/Honolulu', 'country_code' => 'US'],
+];
+
+// PHP to generate the initial time strings and structure
+$timezone_data_for_display = [];
+foreach ($timezones as $cityName => $data) {
+    $timezoneId = $data['id'];
+    $countryCode = $data['country_code'];
+
+    $flagEmoji = get_flag_emoji($countryCode);
+
+    try {
+        $tz = new DateTimeZone($timezoneId);
+        $dateTime = new DateTime('now', $tz);
+        $timeFormatted = $dateTime->format('H:i'); // Only hours and minutes
+
+        $offsetSeconds = $tz->getOffset($dateTime);
+        $offsetFormatted = format_short_offset($offsetSeconds); // Shorter offset format
+
+        $timezone_data_for_display[] = [
+            'cityName'        => htmlspecialchars(strtolower($cityName)), // All lowercase
+            'flagEmoji'       => $flagEmoji,
+            'timezoneId'      => $timezoneId, // Keep original ID for JS calculations
+            'initialTime'     => htmlspecialchars($timeFormatted), // Separate initial time
+            'initialOffset'   => htmlspecialchars($offsetFormatted), // Separate initial offset
+        ];
+
+    } catch (Exception $e) {
+        // Fallback for invalid timezone IDs
+        $timezone_data_for_display[] = [
+            'cityName'        => htmlspecialchars(strtolower($cityName)),
+            'flagEmoji'       => $flagEmoji, // Still show flag if code is valid
+            'timezoneId'      => $timezoneId,
+            'initialTime'     => 'n/a', // Lowercase n/a
+            'initialOffset'   => 'error', // Lowercase error
+        ];
+        error_log("Error for timezone $timezoneId: " . $e->getMessage());
+    }
+}
+?>
+
+<style>
+    /* No custom font import - reverts to browser default */
+
+    /* Minimal styles for the banner structure and sliding */
+    .sliding-timezone-container {
+        width: 100%;
+        overflow: hidden; /* Hides content outside the visible area for sliding */
+        white-space: nowrap; /* Ensures all items stay in one row */
+        margin-top: 10px; /* Space from your header text */
+        box-sizing: border-box; /* Include padding in width */
+        /* --- BACKGROUND & FONT SIZE --- */
+        /*background-color: #000;  Black background retained for contrast */
+        /*color: #333; /* Standard dark gray text for readability */
+        font-size: 0.9em; /* Slightly reduced font size retained */
+        padding: 5px 0; /* Vertical padding retained */
+    }
+
+    .timezone-track {
+        display: inline-block; /* Makes it a single line */
+        transform: translateX(0);
+        transition: none;
+        animation: none;
+    }
+
+    .timezone-item-wrapper {
+        display: inline-block; /* Each item next to each other */
+        padding: 0 10px; /* Space between timezone entries */
+        line-height: 1.5em; /* Vertical spacing/height for the row */
+        box-sizing: border-box;
+        vertical-align: middle;
+        /* Reverted to standard font: removed font-family 'Orbitron' */
+    }
+
+    .timezone-separator {
+        padding: 0 5px; /* Space around the '::' separator */
+        color: #999; /* Slightly lighter gray for subtle separation */
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    /* Style for the offset in parenthesis */
+    .tz-offset {
+        white-space: nowrap; /* Ensure offset stays together */
+    }
+
+    /* Styles for individual elements within an item */
+    .tz-flag {
+        margin-right: 3px; /* Small space after flag */
+    }
+</style>
+
+<div class="sliding-timezone-container">
+    <div class="timezone-track">
+        <?php
+        // To create a seamless infinite loop for sliding, duplicate the items.
+        $display_loops = 2; // Display the full set of timezones twice
+        for ($i = 0; $i < $display_loops; $i++):
+            foreach ($timezone_data_for_display as $index => $data):
+        ?>
+            <span class="timezone-item-wrapper"
+                  data-timezone-id="<?= $data['timezoneId'] ?>"
+                  data-initial-offset="<?= $data['initialOffset'] ?>">
+                <span class="tz-flag"><?= $data['flagEmoji'] ?></span>
+                <span class="tz-city-name"><?= $data['cityName'] ?></span>
+                <span class="tz-time"><?= $data['initialTime'] ?></span>
+                <span class="tz-offset">(<?= $data['initialOffset'] ?>)</span>
+            </span>
+            <?php
+            // Add separator unless it's the very last item of the very last loop
+            if ($index < count($timezone_data_for_display) - 1 || $i < $display_loops - 1):
+            ?>
+                <span class="timezone-separator">::</span>
+            <?php endif; ?>
+        <?php
+            endforeach;
+        endfor;
+        ?>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const timezoneTrack = document.querySelector('.timezone-track');
+    const timezoneItems = document.querySelectorAll('.timezone-item-wrapper');
+    const separatorElements = document.querySelectorAll('.timezone-separator');
+
+    if (!timezoneTrack || timezoneItems.length === 0) {
+        console.warn("Timezone banner elements not found.");
+        return;
+    }
+
+    let totalOriginalSetWidth = 0;
+    const originalItemsCount = <?php echo count($timezone_data_for_display); ?>;
+
+    for (let i = 0; i < originalItemsCount; i++) {
+        totalOriginalSetWidth += timezoneItems[i].offsetWidth;
+        if (i < originalItemsCount - 1) {
+            if (separatorElements[i]) {
+                totalOriginalSetWidth += separatorElements[i].offsetWidth;
+            }
+        }
+    }
+
+    let currentPosition = 0;
+    const scrollSpeed = 0.2; // Pixels per frame. Adjust for slower/faster sliding.
+    let animationFrameId;
+
+    function slideBanner() {
+        currentPosition -= scrollSpeed;
+
+        if (Math.abs(currentPosition) >= totalOriginalSetWidth) {
+            currentPosition = 0;
+        }
+
+        timezoneTrack.style.transform = `translateX(${currentPosition}px)`;
+        animationFrameId = requestAnimationFrame(slideBanner);
+    }
+
+    // Function to update the time part of each timezone dynamically
+    function updateTimes() {
+        const now = new Date(); // Get current date/time on the client
+
+        timezoneItems.forEach(item => {
+            const timezoneId = item.dataset.timezoneId;
+            const timeSpan = item.querySelector('.tz-time');
+
+            if (timeSpan) {
+                try {
+                    // Use Intl.DateTimeFormat for accurate time display across timezones in JavaScript
+                    const options = {
+                        hour: '2-digit', minute: '2-digit', // Only hours and minutes now
+                        hour12: false, // Force 24-hour format (e.g., 14:30)
+                        timeZone: timezoneId // Apply the specific timezone
+                    };
+                    const timeString = new Intl.DateTimeFormat('en-GB', options).format(now);
+                    timeSpan.textContent = timeString; // Update only the time part
+                } catch (error) {
+                    console.error(`Error updating time for ${timezoneId}:`, error);
+                    timeSpan.textContent = 'n/a'; // Lowercase error message
+                }
+            }
+        });
+    }
+
+    // Start the sliding animation
+    slideBanner();
+
+    // Update the clock display every second
+    setInterval(updateTimes, 1000); // Update every 1 second
+});
+</script>

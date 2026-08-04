@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gallery — magic soul travel</title>
+  <meta name="description" content="Photo gallery — sun, sea and everything in between.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>gallery</h2>
+        <p class="hint">click image to expand</p>
+        <p class="text-dim" id="gallery-status"></p>
+        <div class="gallery-grid" id="gallery-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+    <button class="lightbox-nav prev" id="lightbox-prev" aria-label="Previous">&lsaquo;</button>
+    <img id="lightbox-img" src="" alt="">
+    <button class="lightbox-nav next" id="lightbox-next" aria-label="Next">&rsaquo;</button>
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ---------------------------------------------------------------
+      // Gallery image list.
+      // Drop your photos into: assets/img/gallery/ + assets/img/gallery/thumbs/
+      // and add entries below, e.g.:
+      //   { src: 'assets/img/gallery/your-photo.jpg', thumb: 'assets/img/gallery/thumbs/your-photo.jpg', caption: 'somewhere nice' }
+      // ---------------------------------------------------------------
+      const images = [
+        // { src: 'assets/img/gallery/example.jpg', thumb: 'assets/img/gallery/thumbs/example.jpg', caption: 'add your photos here — edit the script in gallery.html' }
+      ];
+
+      const grid = document.getElementById('gallery-grid');
+      const status = document.getElementById('gallery-status');
+
+      if (images.length === 0) {
+        status.textContent = 'photos coming soon — you can drop your images into assets/img/gallery/ and add them to the list.';
+        for (let i = 0; i < 8; i++) {
+          const div = document.createElement('div');
+          div.className = 'gallery-item';
+          div.innerHTML = `<div class="gallery-placeholder"><span>📷</span><span>photo ${i + 1}</span></div>`;
+          grid.appendChild(div);
+        }
+        return;
+      }
+
+      let currentIndex = 0;
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+
+      function openImage(index) {
+        currentIndex = (index + images.length) % images.length;
+        const img = images[currentIndex];
+        lightboxImg.src = img.src;
+        lightboxCaption.textContent = img.caption || '';
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      grid.innerHTML = images.map((img, i) => `
+        <div class="gallery-item" data-index="${i}">
+          <img src="${img.thumb || img.src}" alt="${img.caption || 'gallery image ' + (i + 1)}" loading="lazy">
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', () => openImage(parseInt(item.dataset.index)));
+      });
+
+      document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-prev').addEventListener('click', () => openImage(currentIndex - 1));
+      document.getElementById('lightbox-next').addEventListener('click', () => openImage(currentIndex + 1));
+      lightbox.addEventListener('click', e => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      document.addEventListener('keydown', e => {
+        if (!lightbox.classList.contains('open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') openImage(currentIndex - 1);
+        if (e.key === 'ArrowRight') openImage(currentIndex + 1);
+      });
+    });
+  </script>
+</body>
+</html>
