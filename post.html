@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>blog post — magic soul travel</title>
+  <meta name="description" content="Travel research — airlines, ferries, hurricane seasons, time zones in the Lesser Antilles.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <div id="post-container"><div class="loading">loading post</div></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('post-container');
+      if (!container) return;
+
+      // Read post id from query string — robust extraction
+      let postId = null;
+      try {
+        const params = new URLSearchParams(window.location.search);
+        postId = params.get('id');
+      } catch (e) {
+        // Fallback: parse from URL manually
+        const match = window.location.search.match(/[?&]id=([^&]+)/);
+        postId = match ? decodeURIComponent(match[1]) : null;
+      }
+
+      if (!postId) {
+        container.innerHTML = '<p class="text-dim">no post id specified — <a href="index.html">go back home</a></p>';
+        return;
+      }
+
+      let posts = [];
+      try {
+        posts = await (await fetch('assets/data/blog.json')).json();
+      } catch (e) {
+        container.innerHTML = '<div class="loading">could not load posts</div>';
+        return;
+      }
+
+      const post = posts.find(p => p.id === postId);
+
+      if (!post) {
+        container.innerHTML = '<p class="text-dim">post not found — <a href="index.html">go back home</a></p>';
+        return;
+      }
+
+      function renderContent(html) {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        div.querySelectorAll('script').forEach(s => s.remove());
+        div.querySelectorAll('a').forEach(a => {
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener noreferrer');
+        });
+        return div.innerHTML;
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      document.title = escapeHtml(post.title) + ' — magic soul travel';
+
+      container.innerHTML = `
+        <article class="post-item">
+          <span class="post-date">${formatDate(post.date)}</span>
+          <h2>${escapeHtml(post.title)}</h2>
+          <div class="post-content">
+            <div class="post-full">${renderContent(post.content)}</div>
+          </div>
+          <p><a href="index.html" class="read-more-toggle">← back to home</a></p>
+        </article>
+      `;
+    });
+  </script>
+</body>
+</html>

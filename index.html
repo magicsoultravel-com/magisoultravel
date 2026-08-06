@@ -15,40 +15,20 @@
 
   <main class="page-wrapper">
 
-    <section class="hero">
-      <h1>magic soul travel</h1>
-      <p class="tagline">see the colours, hear the sounds, feel the atmosphere</p>
-      <p class="tagline-langs">魔法灵魂旅行 &nbsp;·&nbsp; رحلة سحرية للروح &nbsp;·&nbsp; μαγικό ταξίδι ψυχής &nbsp;·&nbsp; जादुई आत्मा यात्रा &nbsp;·&nbsp; 魂の魔法の旅</p>
-    </section>
-
     <div class="sections-wrapper">
 
-      <section class="section">
-        <h2>the journey</h2>
-        <p class="hint">island hopper's wanderings through the lesser antilles & beyond</p>
-        <div class="card-grid" id="preview-cards"></div>
-      </section>
-
+      <!-- Latest Videos (first) -->
       <section class="section">
         <h2>latest from the channel</h2>
         <p class="hint">fresh off the youtube — carnival, planes & paradise</p>
         <div class="video-grid" id="index-videos"></div>
       </section>
 
+      <!-- The Journey — all items in one card grid -->
       <section class="section">
-        <h2>quick planner</h2>
-        <p class="hint">colour your days off, track the year ahead</p>
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-body">
-              <h3>holiday planner</h3>
-              <p class="card-meta">colour-coded calendar, saved right in your browser</p>
-              <div class="card-actions">
-                <a href="calendar.html" class="btn">open planner</a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h2>the journey</h2>
+        <p class="hint">island hopper's wanderings through the lesser antilles & beyond</p>
+        <div class="card-grid" id="preview-cards"></div>
       </section>
 
     </div>
@@ -61,14 +41,34 @@
   <script src="assets/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Page preview cards
+      const grid = document.getElementById('preview-cards');
+
+      // Static page links (trips, gallery, videos, planner)
       const links = [
         { href: 'trips.html', title: 'trips', meta: 'gpx flight tracks over the lesser antilles', desc: 'le diamant, castries, barbados — red lines across the maps' },
         { href: 'gallery.html', title: 'gallery', meta: 'photos & moments', desc: 'sun, sea and everything in between' },
-        { href: 'blog.html', title: 'blog', meta: 'travel research', desc: 'airlines, ferries, hurricane seasons, time zones' },
-        { href: 'videos.html', title: 'videos', meta: 'youtube', desc: 'carnival energy, plane spotting & island sounds' }
+        { href: 'videos.html', title: 'videos', meta: 'youtube', desc: 'carnival energy, plane spotting & island sounds' },
+        { href: 'calendar.html', title: 'holiday planner', meta: 'colour-coded calendar', desc: 'plan your year, track days off — saved right in your browser' }
       ];
-      const grid = document.getElementById('preview-cards');
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function stripHtml(html) {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        let text = div.textContent || div.innerText || '';
+        text = text.replace(/\s+/g, ' ').trim();
+        if (text.length > 120) {
+          text = text.substring(0, 117) + '...';
+        }
+        return text;
+      }
+
+      // Render static links first
       grid.innerHTML = links.map(l => `
         <div class="card">
           <div class="card-body">
@@ -96,6 +96,33 @@
         })
         .catch(() => {
           document.getElementById('index-videos').innerHTML = '<p class="text-dim">videos unavailable right now</p>';
+        });
+
+      // Blog posts — appended to the same grid as the journey section
+      // Small cards (title + clean text excerpt + explore button)
+      fetch('assets/data/blog.json')
+        .then(r => r.json())
+        .then(posts => {
+          if (!grid) return;
+
+          posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          const blogCards = posts.map(post => `
+            <div class="card">
+              <div class="card-body">
+                <h3><a href="post.html?id=${encodeURIComponent(post.id)}">${escapeHtml(post.title)}</a></h3>
+                <p class="card-meta">${stripHtml(post.content)}</p>
+                <div class="card-actions">
+                  <a href="post.html?id=${encodeURIComponent(post.id)}" class="btn btn-sm">explore</a>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+          grid.innerHTML += blogCards;
+        })
+        .catch(() => {
+          if (grid) grid.innerHTML += '<p class="text-dim">blog posts unavailable right now</p>';
         });
     });
   </script>

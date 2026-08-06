@@ -1,19 +1,14 @@
 /* magic soul travel — shared header/nav/footer injection */
 
 const MST_LAYOUT = {
-  header: `
+    header: `
 <header class="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo">magic<span>soul</span>travel</a>
-    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-    <nav class="main-nav">
-      <a href="index.html">home</a>
-      <a href="trips.html">trips</a>
-      <a href="gallery.html">gallery</a>
-      <a href="blog.html">blog</a>
-      <a href="calendar.html">planner</a>
-      <a href="videos.html">videos</a>
-    </nav>
+    <div class="hero">
+      <h1>magic soul travel</h1>
+      <p class="tagline">see the colours, hear the sounds, feel the atmosphere</p>
+      <p class="tagline-langs">魔法灵魂旅行 &nbsp;·&nbsp; رحلة سحرية للروح &nbsp;·&nbsp; μαγικό ταξίδι ψυχής &nbsp;·&nbsp; जादुई आत्मा यात्रा &nbsp;·&nbsp; 魂の魔法の旅</p>
+    </div>
   </div>
 </header>
 <div class="flags-banner" id="flags-banner">
@@ -27,7 +22,6 @@ const MST_LAYOUT = {
     <a href="index.html">home</a>
     <a href="trips.html">trips</a>
     <a href="gallery.html">gallery</a>
-    <a href="blog.html">blog</a>
     <a href="calendar.html">planner</a>
     <a href="videos.html">videos</a>
   </div>

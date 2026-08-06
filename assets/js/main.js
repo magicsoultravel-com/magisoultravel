@@ -141,10 +141,73 @@ function formatDate(dateStr) {
   });
 }
 
+// ----- Background slideshow -----
+function initBackgroundSlideshow() {
+  const slideshow = document.createElement('div');
+  slideshow.id = 'bg-slideshow';
+
+  // Two layers for smooth crossfade
+  const layer1 = document.createElement('div');
+  layer1.className = 'bg-layer';
+  const layer2 = document.createElement('div');
+  layer2.className = 'bg-layer';
+  slideshow.appendChild(layer1);
+  slideshow.appendChild(layer2);
+
+  // Navigation arrows
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'bg-nav bg-nav-prev';
+  prevBtn.setAttribute('aria-label', 'Previous background');
+  prevBtn.innerHTML = '‹';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'bg-nav bg-nav-next';
+  nextBtn.setAttribute('aria-label', 'Next background');
+  nextBtn.innerHTML = '›';
+  slideshow.appendChild(prevBtn);
+  slideshow.appendChild(nextBtn);
+
+  document.body.insertBefore(slideshow, document.body.firstChild);
+
+  fetch('assets/data/backgrounds.json')
+    .then(r => r.json())
+    .then(images => {
+      if (!images || images.length === 0) return;
+
+      let current = 0;
+      let activeLayer = layer1;
+      let inactiveLayer = layer2;
+
+      // Show first image immediately
+      activeLayer.style.backgroundImage = `url('${images[current]}')`;
+      activeLayer.classList.add('active');
+
+      function navigate(direction) {
+        current = (current + direction + images.length) % images.length;
+        inactiveLayer.style.backgroundImage = `url('${images[current]}')`;
+        inactiveLayer.classList.add('active');
+        activeLayer.classList.remove('active');
+        // Swap layers for next transition
+        const temp = activeLayer;
+        activeLayer = inactiveLayer;
+        inactiveLayer = temp;
+      }
+
+      prevBtn.addEventListener('click', () => navigate(-1));
+      nextBtn.addEventListener('click', () => navigate(1));
+
+      // Auto-rotate every 60 seconds
+      setInterval(() => navigate(1), 60000);
+    })
+    .catch(() => {
+      // No background slideshow — silently skip
+    });
+}
+
 // ----- Init on DOM ready -----
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   setActiveNav();
+  initBackgroundSlideshow();
 });
 
 // Expose for other scripts

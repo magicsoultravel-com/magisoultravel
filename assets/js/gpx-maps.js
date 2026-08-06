@@ -1,46 +1,51 @@
-/* magic soul travel — GPX track rendering on Google Maps */
-/* Requires Google Maps JS API. Works standalone (no API key needed for static file fetching). */
+/* magic soul travel — GPX track rendering on Leaflet.js (OpenStreetMap + satellite) */
+/* Uses Leaflet.js with OpenStreetMap and Esri WorldImagery tiles. No API key needed. */
 
 const MST_MAPS = {
-  apiKey: 'AIzaSyAibw0NuRheQo4Qv1mYcm5gN4LROaeWuCE',
   mapObjects: {},
   pendingTracks: [],
+  leafletPromise: null,
 
-  loadAPI() {
+  loadLeaflet() {
     return new Promise((resolve) => {
-      if (window.google && window.google.maps) {
+      if (window.L) {
         resolve();
         return;
       }
 
-      // Script already loading?
-      if (this.apiPromise) {
-        this.apiPromise.then(resolve);
+      if (this.leafletPromise) {
+        this.leafletPromise.then(resolve);
         return;
       }
 
-      this.apiPromise = new Promise((res) => {
-        window.initGPXMapsCallback = () => res();
+      this.leafletPromise = new Promise((res) => {
+        // Load Leaflet CSS
+        if (!document.querySelector('link[href*="leaflet"]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+          document.head.appendChild(link);
+        }
 
+        // Load Leaflet JS
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&callback=initGPXMapsCallback`;
-        script.async = true;
-        script.defer = true;
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.onload = () => res();
         script.onerror = () => {
           document.querySelectorAll('.gpx-map').forEach(el => {
-            el.innerHTML = '<p style="color:#e74c3c; padding:20px;">Failed to load Google Maps. Check your connection.</p>';
+            el.innerHTML = '<p style="color:#e74c3c; padding:20px;">Failed to load maps. Check your connection.</p>';
           });
           res();
         };
         document.head.appendChild(script);
       });
 
-      this.apiPromise.then(resolve);
+      this.leafletPromise.then(resolve);
     });
   },
 
   async init() {
-    await this.loadAPI();
+    await this.loadLeaflet();
     // Render any queued tracks
     this.pendingTracks.forEach(track => this.renderTrack(track.mapId, track.gpxPath));
     this.pendingTracks = [];
@@ -82,8 +87,8 @@ const MST_MAPS = {
     const mapDiv = document.getElementById(mapId);
     if (!mapDiv) return;
 
-    // If API not loaded yet, queue it
-    if (!window.google || !window.google.maps) {
+    // If Leaflet not loaded yet, queue it
+    if (!window.L) {
       this.pendingTracks.push({ mapId, gpxPath });
       return;
     }
@@ -100,35 +105,58 @@ const MST_MAPS = {
       }
 
       // Determine bounds
-      const bounds = new google.maps.LatLngBounds();
-      [...trackPoints, ...waypoints].forEach(p => bounds.extend(p));
+      const bounds = L.latLngBounds(
+        [...trackPoints, ...waypoints].map(p => [p.lat, p.lng])
+      );
 
-      const map = new google.maps.Map(mapDiv, {
-        mapTypeId: google.maps.MapTypeId.HYBRID,
-        disableDefaultUI: true,
-        zoomControl: true
+      // Create map
+      const map = L.map(mapDiv, {
+        zoomControl: true,
+        attributionControl: true
       });
-      map.fitBounds(bounds, 40);
+
+      // Tile layers — map view (OpenStreetMap) and satellite view (Esri WorldImagery)
+      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      });
+
+      const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; Source: Esri, Earthstar Geographics'
+      });
+
+      // Add base layers and layer control (toggle between map and satellite)
+      const baseLayers = {
+        'Map': osmLayer,
+        'Satellite': satelliteLayer
+      };
+
+      L.control.layers(baseLayers, {}, { collapsed: false, position: 'topright' }).addTo(map);
+
+      // Default to satellite view
+      satelliteLayer.addTo(map);
+
+      // Fit bounds to show the full track
+      map.fitBounds(bounds, { padding: [40, 40] });
 
       this.mapObjects[mapId] = map;
 
+      // Add track polyline
       if (trackPoints.length > 0) {
-        new google.maps.Polyline({
-          path: trackPoints,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 4,
-          map
-        });
+        L.polyline(trackPoints.map(p => [p.lat, p.lng]), {
+          color: '#FF0000',
+          weight: 4,
+          opacity: 1.0,
+          smoothFactor: 1
+        }).addTo(map);
       }
 
+      // Add waypoint markers
       waypoints.forEach(wp => {
-        new google.maps.Marker({
-          position: { lat: wp.lat, lng: wp.lng },
-          map,
-          title: wp.name
-        });
+        L.marker([wp.lat, wp.lng])
+          .bindPopup(wp.name)
+          .addTo(map);
       });
     } catch (err) {
       console.error(`Error rendering map ${mapId}:`, err);
