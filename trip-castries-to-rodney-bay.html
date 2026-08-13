@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>castries to rodney bay — trips | magic soul travel</title>
+  <meta name="description" content="Exploring the Saint Lucian coast from Castries to Rodney Bay.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">coastal exploration in saint lucia</p>
+        <div class="trip-card expanded" id="4.gpx">
+          <div class="trip-card-body">
+            <h3 class="trip-title">castries to rodney bay</h3>
+            <p class="trip-meta">date: 2025-03-01 · drive</p>
+            <p class="trip-description">exploring the saint lucian coast</p>
+            <div id="map-4.gpx" class="trip-map" data-gpx="assets/gpx/4.gpx"></div>
+            <p class="trip-epic">starting from our airbnb seated on the castries hills morne road with a steep climb on the driveway followed by steady descent with spectacular views of the city and port.</p>
+            <div class="video-grid-thumbs">
+              <h4>Related Videos</h4>
+              <div class="video-thumb-item">
+                <a href="https://www.youtube.com/watch?v=Nfwg1TwUrOg" target="_blank" rel="noopener noreferrer">
+                  <img src="https://img.youtube.com/vi/Nfwg1TwUrOg/maxresdefault.jpg" alt="Related video">
+                  <p>Castries to Rodney Bay</p>
+                </a>
+              </div>
+            </div>
+            <div class="trip-actions">
+              <a href="trips.html" class="btn btn-sm">back to trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      MST_MAPS.renderTrack('map-4.gpx', 'assets/gpx/4.gpx');
+    });
+  </script>
+</body>
+</html>

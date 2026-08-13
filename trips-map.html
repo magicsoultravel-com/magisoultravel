@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trips map — all tracks on one page | magic soul travel</title>
+  <meta name="description" content="View all flight tracks and trips overlaid on an interactive map. Click any trail to explore.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <!-- Map container -->
+        <h2>trips map <span id="trip-count" class="trip-count"></span></h2>
+        <p class="hint">click any trail to explore that trip · all tracks shown together</p>
+        <div id="all-trips-map" class="gpx-map" style="height: 500px;"></div>
+        <div class="trip-actions" style="margin-top: 16px;">
+          <a href="trips.html" class="btn btn-sm">view as list</a>
+          <a href="index.html" class="btn btn-sm">back to home</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const mapDiv = document.getElementById('all-trips-map');
+      
+      try {
+        const trips = await (await fetch('assets/data/trips.json')).json();
+        
+        // Display trip count
+        const tripCountEl = document.getElementById('trip-count');
+        const tripCount = trips.length;
+        if (tripCount > 0) {
+          tripCountEl.textContent = `(${tripCount})`;
+          tripCountEl.style.color = 'var(--accent)';
+          tripCountEl.style.fontWeight = '600';
+        }
+
+        // Load Leaflet
+        if (!window.L) {
+          await new Promise((resolve) => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(link);
+            
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = resolve;
+            document.head.appendChild(script);
+          });
+        }
+        
+        // Create map centered on Caribbean
+        const map = L.map('all-trips-map').setView([14.5, -61.5], 7);
+        
+        // Map styles with multiple options
+        // Available styles: Map (OSM), Satellite, Topo, OpenTopoMap, Shaded Relief (Natural Earth style)
+        // Note: Stamen maps are no longer available (shut down in 2017)
+        // Note: CartoDB, Stadia, Thunderforest now require API keys
+        // Note: Humanitarian (hot) tiles server is currently offline
+        const mapStyles = {
+          'Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }),
+          'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; Source: Esri, Earthstar Geographics'
+          }),
+          'Topo': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: '&copy; Esri, DigitalGlobe'
+          }),
+          'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: '&copy; <a href="https://www.opentopomap.org">OpenTopoMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }),
+          'Shaded Relief (Natural Earth)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 12,
+            attribution: '&copy; Esri, DigitalGlobe, HERE, Garmin'
+          }),
+        };
+
+        // Add layer control for all map styles
+        L.control.layers(mapStyles, {}, { collapsed: false, position: 'topright' }).addTo(map);
+
+        // Default to Satellite view
+        mapStyles['Satellite'].addTo(map);
+        
+        // Color palette for different trips
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+        
+        // Collect all track points to compute combined bounds
+        const allTrackPoints = [];
+
+        // Parse and render each trip
+        const trackPromises = trips.map((trip, idx) => {
+          const color = colors[idx % colors.length];
+          
+          return fetch(trip.file)
+            .then(r => r.text())
+            .then(xmlText => {
+              const parser = new DOMParser();
+              const xml = parser.parseFromString(xmlText, 'text/xml');
+              
+              const trackPoints = [];
+              const segments = xml.getElementsByTagName('trkseg');
+              for (const seg of segments) {
+                const pts = seg.getElementsByTagName('trkpt');
+                for (const pt of pts) {
+                  const lat = parseFloat(pt.getAttribute('lat'));
+                  const lng = parseFloat(pt.getAttribute('lon'));
+                  if (!isNaN(lat) && !isNaN(lng)) {
+                    trackPoints.push([lat, lng]);
+                  }
+                }
+              }
+              
+              if (trackPoints.length > 0) {
+                // Collect points for bounds calculation
+                allTrackPoints.push(...trackPoints);
+                
+                const polyline = L.polyline(trackPoints, {
+                  color: color,
+                  weight: 4,
+                  opacity: 0.7
+                }).addTo(map);
+                
+                // Click to navigate
+                polyline.on('click', function(e) {
+                  window.location.href = trip.page || `trip-${trip.id}.html`;
+                });
+                
+                // Tooltip on hover
+                polyline.bindTooltip(trip.title, { permanent: false });
+              }
+            })
+            .catch(err => console.warn(`Could not load ${trip.file}:`, err));
+        });
+
+        // Wait for all tracks to load, then zoom out to show all
+        Promise.all(trackPromises).then(() => {
+          if (allTrackPoints.length > 0) {
+            const bounds = L.latLngBounds(allTrackPoints);
+            map.fitBounds(bounds, { padding: [60, 60] });
+          }
+        });
+        
+      } catch (err) {
+        console.error('Error loading trips:', err);
+        mapDiv.innerHTML = '<p style="color:#e74c3c; padding:20px;">Could not load trips map.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

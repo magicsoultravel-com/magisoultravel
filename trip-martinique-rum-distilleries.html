@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>martinique rum distilleries — trips | magic soul travel</title>
+  <meta name="description" content>Visiting Saint-James, Habitation Clément and other rum distilleries in Martinique.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">rum distillery tour</p>
+        <div class="trip-card expanded" id="trip-3-gpx">
+          <div class="trip-card-body">
+            <h3 class="trip-title">martinique rum distilleries</h3>
+            <p class="trip-meta">date: 2025-03-07 · drive</p>
+            <p class="trip-description">visiting distilleries saint-james, habitacion clement, and more</p>
+            <div id="map-trip-3-gpx" class="trip-map" data-gpx="assets/gpx/3.gpx"></div>
+            <p class="trip-epic">we started from our airbnb at black diamond with first destination to famous Saint-James distillery on the northern side of the island, nearby Saint-Marie town. the 50km journey took us about an hour. the entry is free, there is a small museum as well as a degustation and shopping area. from there we took off towards another famous distillery which is Habitation Clément, with a slight detour to Presque Îlet de la Caravelle to admire some views of the east coast of the island. here we reached a road which was not suitable for our Renault Clio, what adventures lay beyond? :) habitation clement is a huge estate, with a botanic garden, museums, art galleries, and of course rum tasting (even smelling) areas. the overall experience is fantastic and we ended up with two mango maracuya (passion fruit) rum punch bottles. we left as the estate was closing at 6pm and drove back to our Marinotel in Le Diamant. the whole trip took us about 8hrs and we covered roughly 130km distance</p>
+            <div class="related-videos">
+              <h4>Related Videos</h4>
+              <p class="text-dim">coming soon</p>
+            </div>
+            <div class="trip-actions">
+              <a href="trips.html" class="btn btn-sm">back to trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mapDiv = document.getElementById('map-trip-3-gpx');
+      if (mapDiv) {
+        MST_MAPS.renderTrack('map-trip-3-gpx', 'assets/gpx/3.gpx');
+      }
+    });
+  </script>
+</body>
+</html>

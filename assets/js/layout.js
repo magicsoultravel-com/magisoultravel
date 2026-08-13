@@ -5,7 +5,9 @@ const MST_LAYOUT = {
 <header class="site-header">
   <div class="header-inner">
     <div class="hero">
-      <h1>magic soul travel</h1>
+      <a href="index.html" class="logo-link">
+        <h1>magic soul travel</h1>
+      </a>
       <p class="tagline">see the colours, hear the sounds, feel the atmosphere</p>
       <p class="tagline-langs">魔法灵魂旅行 &nbsp;·&nbsp; رحلة سحرية للروح &nbsp;·&nbsp; μαγικό ταξίδι ψυχής &nbsp;·&nbsp; जादुई आत्मा यात्रा &nbsp;·&nbsp; 魂の魔法の旅</p>
     </div>
@@ -18,13 +20,7 @@ const MST_LAYOUT = {
 
   footer: `
 <footer class="site-footer">
-  <div class="footer-links">
-    <a href="index.html">home</a>
-    <a href="trips.html">trips</a>
-    <a href="gallery.html">gallery</a>
-    <a href="calendar.html">planner</a>
-    <a href="videos.html">videos</a>
-  </div>
+  <p>© <span id="year"></span> magicsoultravel.com</p>
   <div class="hashtags">
     #MagicSoulTravel #Wanderlust #TravelMore #HiddenGems #AdventureAwaits #BucketListTravel
     #ExploreTheWorld #TravelVibes #NatureLover #Globetrotter #SaintLucia #Barbados #Martinique
@@ -32,7 +28,6 @@ const MST_LAYOUT = {
     #FerryRide #CruiseShip #Concert #LiveBand #MilitaryOrchestra #RelaxingVideos #NatureSounds
     #AmbientVideos #MardiGras #CarnivalVibes #Sunset #Timelapse #ParadiseCity #ParadiseIsland
   </div>
-  <p>© <span id="year"></span> magicsoultravel.com</p>
 </footer>
 `
 };

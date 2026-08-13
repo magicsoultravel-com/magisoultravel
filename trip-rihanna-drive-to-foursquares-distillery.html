@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rihanna drive to foursqueres rum distillery — trips | magic soul travel</title>
+  <meta name="description" content>Barbados south coast drive from city center to Foursquares Rum Distillery and airport.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">barbados south coast drive</p>
+        <div class="trip-card expanded" id="trip-2-gpx">
+          <div class="trip-card-body">
+            <h3 class="trip-title">rihanna drive to foursqueres rum distillery</h3>
+            <p class="trip-meta">date: 2025-03-11 · drive</p>
+            <p class="trip-description">barbados south coast drive from city center to distillery and airport</p>
+            <div id="map-trip-2-gpx" class="trip-map" data-gpx="assets/gpx/2.gpx"></div>
+            <p class="trip-epic">we start off rihanna drive after visitng the shack and monument to barbados' diamond, from there we headed south via the city center to the coast and continued along rockley. we took a short stop at lanterns mall at hastings (there is an ATM and a store open on sunday), and further along the hastings main road is also a chefette which is our favorite barbadian fast food :) from there we continued eastward along worthing beach before merging with errol barrow highway, one of the islands main routes. our next destination was foursquares rum distillery and plantation producing some of the best known rums (not as known as mount gay). we took a quick trip around the distillery which are always fun to visit, especially for the degustation ;) finally, it was time for us to head to the airport on that day, which is just a stone's throw away, actually making the foursquares distillery a great last minute stop for your bajan adventure</p>
+            <div class="related-videos">
+              <h4>Related Videos</h4>
+              <p class="text-dim">coming soon</p>
+            </div>
+            <div class="trip-actions">
+              <a href="trips.html" class="btn btn-sm">back to trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mapDiv = document.getElementById('map-trip-2-gpx');
+      if (mapDiv) {
+        MST_MAPS.renderTrack('map-trip-2-gpx', 'assets/gpx/2.gpx');
+      }
+    });
+  </script>
+</body>
+</html>

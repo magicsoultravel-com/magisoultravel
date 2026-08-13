@@ -1,43 +1,86 @@
 [
   {
-    "id": "barbados-four-squares-distillery",
-    "file": "assets/gpx/barbados-four-squares-distillery.gpx",
-    "title": "Barbados Four Squares Distillery",
-    "date": "2025-03-10",
-    "activity": "flight",
-    "description": "Flight track over Barbados, Four Squares Distillery area."
-  },
-  {
-    "id": "castries-to-rodney-bay",
-    "file": "assets/gpx/castries-to-rodney-bay.gpx",
-    "title": "Castries to Rodney Bay",
-    "date": "2025-03-02",
-    "activity": "flight",
-    "description": "Flight track from Castries out to Rodney Bay, St Lucia."
-  },
-  {
-    "id": "le-diamant-flight",
-    "file": "assets/gpx/le-diamant-flight.gpx",
-    "title": "Le Diamant Flight",
-    "date": "2025-03-06",
-    "activity": "flight",
-    "description": "Flight track around Le Diamant, Martinique.",
-    "related_video": "https://www.youtube.com/watch?v=QZnMqHw9xWY"
-  },
-  {
-    "id": "christ-church-flight",
-    "file": "assets/gpx/christ-church-flight.gpx",
-    "title": "Christ Church Flight",
-    "date": "2025-02-27",
-    "activity": "flight",
-    "description": "Flight track over Christ Church, Barbados."
-  },
-  {
-    "id": "castries-to-fdf",
-    "file": "assets/gpx/castries-to-fdf.gpx",
-    "title": "Castries to FDF",
+    "id": "1.gpx",
+    "file": "assets/gpx/1.gpx",
+    "title": "saint lucia to martinique ferry",
+    "slug": "saint-lucia-to-martinique-ferry",
+    "page": "trip-saint-lucia-to-martinique-ferry.html",
+    "description": "from castries to fort-de-france with express des iles",
+    "activity": "ferry",
     "date": "2025-03-03",
+    "related_vid": "https://www.youtube.com/watch?v=9LluVcu0J7c,https://www.youtube.com/watch?v=Pye7JiS5iwc",
+    "trip_epic": "where is the express des iles ferry terminal in castries? it's on the town outskirts as you follow manoel street onto millennium highway. next to cargo, there is no duty free area, but the cruise ship terminal is within few minutes marching distance for any last minute needs. there is a quick immigration and security check where they will confiscate glass bottles (store them in your main luggage) and other potentially dangerous items so be wary (kinda like at an airpot). our departure was scheduled at 3pm and arrival 1h30 later in fort-de-france. the trip is smooth and views of both islands are truly spectacular! the ferry speed tops at about 55kph. approaching martinique from the south the first landmark you will spot is the rocher du diamant just off the coast, and continuing a short cruise along the west coast the ferry finally arrives in fort-de-france passing the french fort on the portside (left side)"
+  },
+  {
+    "id": "2.gpx",
+    "file": "assets/gpx/2.gpx",
+    "title": "rihanna drive to foursqueres rum distillery",
+    "slug": "rihanna-drive-to-foursquares-distillery",
+    "page": "trip-rihanna-drive-to-foursquares-distillery.html",
+    "description": "barbados south coast drive from city center to distillery and airport",
+    "activity": "drive",
+    "date": "2025-03-11",
+    "related_vid": "coming soon",
+    "trip_epic": "we start off rihanna drive after visitng the shack and monument to barbados' diamond, from there we headed south via the city center to the coast and continued along rockley. we took a short stop at lanterns mall at hastings (there is an ATM and a store open on sunday), and further along the hastings main road is also a chefette which is our favorite barbadian fast food :) from there we continued eastward along worthing beach before merging with errol barrow highway, one of the islands main routes. our next destination was foursquares rum distillery and plantation producing some of the best known rums (not as known as mount gay). we took a quick trip around the distillery which are always fun to visit, especially for the degustation ;) finally, it was time for us to head to the airport on that day, which is just a stone's throw away, actually making the foursquares distillery a great last minute stop for your bajan adventure"
+  },
+  {
+    "id": "3.gpx",
+    "file": "assets/gpx/3.gpx",
+    "title": "martinique rum distilleries",
+    "slug": "martinique-rum-distilleries",
+    "page": "trip-martinique-rum-distilleries.html",
+    "description": "visiting distilleries saint-james, habitacion clement, and more",
+    "activity": "drive",
+    "date": "2025-03-07",
+    "related_vid": "coming soon",
+    "trip_epic": "we started from our airbnb at black diamond with first destination to famous Saint-James distillery on the northern side of the island, nearby Saint-Marie town. the 50km journey took us about an hour. the entry is free, there is a small museum as well as a degustation and shopping area. from there we took off towards another famous distillery which is Habitation Clément, with a slight detour to Presque Îlet de la Caravelle to admire some views of the east coast of the island. here we reached a road which was not suitable for our Renault Clio, what adventures lay beyond? :) habitation clement is a huge estate, with a botanic garden, museums, art galleries, and of course rum tasting (even smelling) areas. the overall experience is fantastic and we ended up with two mango maracuya (passion fruit) rum punch bottles. we left as the estate was closing at 6pm and drove back to our Marinotel in Le Diamant. the whole trip took us about 8hrs and we covered roughly 130km distance"
+  },
+  {
+    "id": "4.gpx",
+    "file": "assets/gpx/4.gpx",
+    "title": "castries to rodney bay",
+    "slug": "castries-to-rodney-bay",
+    "page": "trip-castries-to-rodney-bay.html",
+    "description": "exploring the saint lucian coast",
+    "activity": "drive",
+    "date": "2025-03-01",
+    "related_vid": "https://www.youtube.com/watch?v=Nfwg1TwUrOg",
+    "trip_epic": "starting from our airbnb seated on the castries hills morne road with a steep climb on the driveway followed by steady descent with spectacular views of the city and port. saint lucia has amazing mountainous landscape, it's truly a gem. we reach the city center, on the way there is an interesting mural presenting the history of saint lucia. passing by the express des iles/cargo terminal, and both cruise ship docks (la place carenage and pointe seraphine), and onto the road parallel to the honorable george fl charles aka vigies or SLU. the road leads in parallel to the tarmac, if you are lucky you may just see a plane landing or taking off across the fence :) we then continue furhter north, there is a two lanes section for some distance but single lane feel somewhat wider. finally, we reach the reduit beach which has a big free parking. off for a stroll with beautfil views of the mountainous landscape. then just sit down for some roti and piton, listen to live steel pans and the ocean, admire the views."
+  },
+  {
+    "id": "5.gpx",
+    "file": "assets/gpx/5.gpx",
+    "title": "le diamant to fort-de-france",
+    "slug": "le-diamant-to-fort-de-france",
+    "page": "trip-le-diamant-to-fort-de-france.html",
+    "description": "from black diamond to the capital of martinique",
+    "activity": "drive",
+    "date": "2025-03-05",
+    "related_vid": "https://www.youtube.com/watch?v=FPNHGJF__jE",
+    "trip_epic": "we drove from our airbnb at black diamond by philippe hureau to fort-de-france, which is about 30km of comfortable drive. the roads on martinique are some of the best in the caribbean. the max speed is 90kph and you don't need to worry about needing a 4x4 suzuki to tour the island. the journey takes roughly 45min of easy driving, so just relax and enjoy the views :)"
+  },
+  {
+    "id": "6.gpx",
+    "file": "assets/gpx/6.gpx",
+    "title": "bridgetown to castries air caribbean flight",
+    "slug": "bridgetown-to-castries-flight",
+    "page": "trip-bridgetown-to-castries-flight.html",
+    "description": "BGI to SLU",
     "activity": "flight",
-    "description": "Flight track from Castries, St Lucia to Fort-de-France, Martinique."
+    "date": "2025-02-27",
+    "related_vid": "https://www.youtube.com/watch?v=zkJsT1QPZ20",
+    "trip_epic": "caribbean airlines is the most reliable carrier in the region serving many locations at affordable prices. this flight was direct from bridgetown, grantley adams airport, in barbados to castries, georges fl charles airport, in saint lucia (aka vigie airport). vigie is the smaller of the airports on saint lucia, so the dreamliners and other bulky aircraft don't land here, instead, they arrive at hewanorra airport on the southern tip of the island. the distance between barbados and saint lucia is just below 300km and the flight is less than an hour. you may expect bit of winds when approaching slu, as explained by the captain in our video - check it out for more insights, yt does a good job with autogenerating the subtitles :) "
+  },
+  {
+    "id": "7.gpx",
+    "file": "assets/gpx/7.gpx",
+    "title": "mardi gras in martinique",
+    "slug": "mardi-gras-martinique",
+    "page": "trip-mardi-gras-martinique.html",
+    "description": "carnival vibes in fort-de-france",
+    "activity": "event",
+    "date": "2025-03-04",
+    "related_vid": "https://www.youtube.com/watch?v=Eos53eVXRAM,https://www.youtube.com/watch?v=Qj1Mxkg8b7Q,https://www.youtube.com/watch?v=hpT-Raf7fts,https://www.youtube.com/watch?v=VwnPeFpTPH4,and more on our yt chan!",
+    "trip_epic": "mardi gras in the caribbean is an extraordinary experience and every country celebrates it in its own unique way. in martinique on this particular tuesday everyone dresses in red and black which are the devil's (vaval's) colours. the carnival is the festival of vaval and he will be bruned on stake on ash wednesday, but for now the hell is loose on earth. we arrived in martinique early afternoon, the peripherique (very reminiscent of paris) takes you to the city center and we managed to find a parking spot on one of the main avenues (rue de la republique). form there its a short walk to the seaside. we watched the mardi gras parade mainly from boulevard alfassa / ernest desporges. right there is a delicious dabkeh kebab which we can wholehearteadly recommend, one of chefs was even singing karaoke :) the atmosphere during the carnival is insane, and the party is around every corner, with the drums echoing long into the night. words cannot describe, so just check out some of our videos to feel the amazing atmosphere of this unique experience. vive la martinique!"
   }
 ]

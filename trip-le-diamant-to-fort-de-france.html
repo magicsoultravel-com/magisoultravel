@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>le diamant to fort-de-france — trips | magic soul travel</title>
+  <meta name="description" content="Scenic drive from Black Diamond to the capital of Martinique.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">scenic drive on martinique</p>
+        <div class="trip-card expanded" id="5.gpx">
+          <div class="trip-card-body">
+            <h3 class="trip-title">le diamant to fort-de-france</h3>
+            <p class="trip-meta">date: 2025-03-05 · drive</p>
+            <p class="trip-description">from black diamond to the capital of martinique</p>
+            <div id="map-5.gpx" class="trip-map" data-gpx="assets/gpx/5.gpx"></div>
+            <p class="trip-epic">we drove from our airbnb at black diamond by philippe hureau to fort-de-france, which is about 30km of comfortable drive.</p>
+            <div class="video-grid-thumbs">
+              <h4>Related Videos</h4>
+              <div class="video-thumb-item">
+                <a href="https://www.youtube.com/watch?v=FPNHGJF__jE" target="_blank" rel="noopener noreferrer">
+                  <img src="https://img.youtube.com/vi/FPNHGJF__jE/maxresdefault.jpg" alt="Related video">
+                  <p>Martinique Drive</p>
+                </a>
+              </div>
+            </div>
+            <div class="trip-actions">
+              <a href="trips.html" class="btn btn-sm">back to trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      MST_MAPS.renderTrack('map-5.gpx', 'assets/gpx/5.gpx');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>saint lucia to martinique ferry — trips | magic soul travel</title>
+  <meta name="description" content="Ferry journey from Castries, St Lucia to Fort-de-France, Martinique with Express des Iles.">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <h2>trips</h2>
+        <p class="hint">ferry journey with express des iles</p>
+        <div class="trip-card expanded" id="1.gpx">
+          <div class="trip-card-body">
+            <h3 class="trip-title">saint lucia to martinique ferry</h3>
+            <p class="trip-meta">date: 2025-03-03 · ferry</p>
+            <p class="trip-description">from castries to fort-de-france with express des iles</p>
+            <div id="map-1.gpx" class="trip-map" data-gpx="assets/gpx/1.gpx"></div>
+            <p class="trip-epic">where is the express des iles ferry terminal in castries? it's on the town outskirts as you follow manoel street onto millennium highway. next to cargo, there is no duty free area, but the cruise ship terminal is within few minutes marching distance for any last minute needs. there is a quick immigration and security check where they will confiscate glass bottles (store them in your main luggage) and other potentially dangerous items so be wary (kinda like at an airpot). our departure was scheduled at 3pm and arrival 1h30 later in fort-de-france. the trip is smooth and views of both islands are truly spectacular! the ferry speed tops at about 55kph. approaching martinique from the south the first landmark you will spot is the rocher du diamant just off the coast, and continuing a short cruise along the west coast the ferry finally arrives in fort-de-france passing the french fort on the portside (left side)</p>
+            <div class="video-grid-thumbs">
+              <h4>Related Videos</h4>
+              <div class="video-thumb-item">
+                <a href="https://www.youtube.com/watch?v=9LluVcu0J7c" target="_blank" rel="noopener noreferrer">
+                  <img src="https://img.youtube.com/vi/9LluVcu0J7c/maxresdefault.jpg" alt="Related video">
+                  <p>Ferry Journey Highlights</p>
+                </a>
+              </div>
+              <div class="video-thumb-item">
+                <a href="https://www.youtube.com/watch?v=Pye7JiS5iwc" target="_blank" rel="noopener noreferrer">
+                  <img src="https://img.youtube.com/vi/Pye7JiS5iwc/maxresdefault.jpg" alt="Related video">
+                  <p>Express des Iles Experience</p>
+                </a>
+              </div>
+            </div>
+            <div class="trip-actions">
+              <a href="trips.html" class="btn btn-sm">back to trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-slot"></div>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gpx-maps.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mapDiv = document.getElementById('map-1.gpx');
+      if (mapDiv) {
+        MST_MAPS.renderTrack('map-1.gpx', 'assets/gpx/1.gpx');
+      }
+    });
+  </script>
+</body>
+</html>
