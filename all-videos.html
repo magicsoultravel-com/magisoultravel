@@ -8,76 +8,197 @@
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
-    .video-list {
+    .videos-header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .view-switcher {
+      display: flex;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .view-btn:hover, .view-btn.active {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .view-btn.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* --- TILES VIEW (Grid) --- */
+    .video-list.tiles-view {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 20px;
     }
-    
-    .video-item {
+
+    .video-list.tiles-view .video-item {
       background: var(--bg-elev);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       overflow: hidden;
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
     }
-    
-    .video-item:hover {
+
+    .video-list.tiles-view .video-item:hover {
       transform: translateY(-4px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
       border-color: var(--accent);
     }
-    
-    .video-link {
+
+    .video-list.tiles-view .video-link {
       display: flex;
+      flex-direction: column;
       text-decoration: none;
       color: inherit;
+      height: 100%;
     }
-    
-    .video-thumbnail {
+
+    .video-list.tiles-view .video-thumbnail {
       position: relative;
       width: 100%;
-      height: 200px;
+      height: 190px;
       background-size: cover;
       background-position: center;
       background-color: var(--border);
     }
-    
+
+    .video-list.tiles-view .video-info {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* --- LIST VIEW --- */
+    .video-list.list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .video-list.list-view .video-item {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .video-list.list-view .video-item:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .video-list.list-view .video-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      gap: 16px;
+      padding: 10px;
+    }
+
+    .video-list.list-view .video-thumbnail {
+      position: relative;
+      width: 160px;
+      height: 90px;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: var(--border);
+      border-radius: 6px;
+    }
+
+    .video-list.list-view .video-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0;
+    }
+
     .video-duration {
       position: absolute;
-      bottom: 12px;
-      right: 12px;
+      bottom: 8px;
+      right: 8px;
       background: rgba(0, 0, 0, 0.8);
       color: #fff;
-      padding: 4px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 500;
     }
-    
+
     .video-views {
       position: absolute;
-      bottom: 12px;
-      left: 12px;
+      bottom: 8px;
+      left: 8px;
       background: rgba(0, 0, 0, 0.8);
       color: #fff;
-      padding: 4px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 500;
     }
-    
-    .video-info {
-      padding: 14px;
-    }
-    
+
     .video-title {
-      margin: 0 0 8px;
-      font-size: 1.1rem;
+      margin: 0 0 6px;
+      font-size: 1.05rem;
       color: var(--text);
       line-height: 1.3;
     }
-    
+
     .video-meta {
       display: flex;
       align-items: center;
@@ -85,18 +206,28 @@
       font-size: 0.85rem;
       color: var(--text-dim);
     }
-    
+
     .video-separator {
       opacity: 0.5;
     }
-    
-    @media (max-width: 600px) {
-      .video-list {
-        grid-template-columns: 1fr;
+
+    .section-counter {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-left: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .video-list.list-view .video-thumbnail {
+        width: 120px;
+        height: 70px;
       }
-      
-      .video-thumbnail {
-        height: 180px;
+      .videos-header-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .view-switcher {
+        justify-content: center;
       }
     }
   </style>
@@ -109,10 +240,27 @@
     <div class="sections-wrapper">
 
       <section class="section">
-        <h2>all videos</h2>
-        <p class="hint">complete list of videos from the channel — click a video to watch</p>
-        <div class="video-list" id="all-videos-list"><p class="loading">loading videos</p></div>
-        <div style="margin-top: 24px;">
+        <h2>all videos <span id="video-count" class="section-counter"></span></h2>
+        <p class="hint">complete list of videos & shorts from the channel — click to watch</p>
+        
+        <div class="videos-header-controls">
+          <div class="filter-tabs" id="filter-tabs">
+            <button class="filter-btn active" data-filter="all">all videos</button>
+            <button class="filter-btn" data-filter="normal">videos (<span id="count-normal">0</span>)</button>
+            <button class="filter-btn" data-filter="shorts">shorts (<span id="count-shorts">0</span>)</button>
+          </div>
+
+          <div class="view-switcher" id="view-switcher">
+            <button class="view-btn active" data-view="tiles" title="Tiles View">🔲 tiles</button>
+            <button class="view-btn" data-view="list" title="List View">☰ list</button>
+          </div>
+        </div>
+
+        <div class="video-list tiles-view" id="all-videos-list">
+          <p class="loading">loading videos...</p>
+        </div>
+
+        <div style="margin-top: 32px; text-align: center;">
           <a class="btn" href="https://www.youtube.com/@magicsoultravel" target="_blank" rel="noopener noreferrer">visit our channel ↗</a>
         </div>
       </section>
@@ -125,7 +273,6 @@
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    // Advanced CSV parser that handles quoted fields with embedded newlines
     function parseCSV(csvText) {
       const headers = [];
       const results = [];
@@ -134,7 +281,6 @@
       let row = [];
       let i = 0;
       
-      // Remove BOM if present
       if (csvText.charCodeAt(0) === 0xFEFF) {
         csvText = csvText.slice(1);
       }
@@ -144,7 +290,6 @@
         
         if (inQuotes) {
           if (char === '"') {
-            // Check if this is a doubled quote (escaped quote)
             if (i + 1 < csvText.length && csvText[i + 1] === '"') {
               currentField += '"';
               i += 2;
@@ -165,9 +310,8 @@
             currentField = '';
             i++;
           } else if (char === '\n' || char === '\r') {
-            // End of row
             if (char === '\r' && i + 1 < csvText.length && csvText[i + 1] === '\n') {
-              i += 2; // Skip \r\n
+              i += 2;
             } else {
               i++;
             }
@@ -176,10 +320,8 @@
             
             if (row.length > 0) {
               if (headers.length === 0) {
-                // First row is headers
                 row.forEach(h => headers.push(h.replace(/^\s*["']|["']\s*$/g, '')));
               } else {
-                // Data row
                 const video = {};
                 headers.forEach((h, idx) => {
                   video[h] = row[idx] || '';
@@ -195,7 +337,6 @@
         }
       }
       
-      // Handle last field if file doesn't end with newline
       if (row.length > 0 || currentField) {
         row.push(currentField.trim());
         const video = {};
@@ -206,6 +347,24 @@
       }
       
       return results;
+    }
+
+    function parseDurationSeconds(dur) {
+      if (!dur) return 0;
+      dur = dur.replace(/"/g, '').trim();
+      const parts = dur.split(':').map(Number);
+      if (parts.length === 2) {
+        return parts[0] * 60 + parts[1];
+      } else if (parts.length === 3) {
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      }
+      return parseInt(dur, 10) || 0;
+    }
+
+    function isShort(video) {
+      const durSec = parseDurationSeconds(video['Duration']);
+      const title = (video['Video Title'] || '').toLowerCase();
+      return durSec <= 60 || title.includes('#shorts') || title.includes('#short');
     }
 
     function formatDuration(duration) {
@@ -234,70 +393,121 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const list = document.getElementById('all-videos-list');
+      const listEl = document.getElementById('all-videos-list');
+      const countEl = document.getElementById('video-count');
+      const countNormalEl = document.getElementById('count-normal');
+      const countShortsEl = document.getElementById('count-shorts');
 
       let csvText;
       try {
         const response = await fetch('assets/data/Magic-Soul-Travel.csv');
         csvText = await response.text();
       } catch (e) {
-        list.innerHTML = '<p class="text-dim">could not load videos</p>';
+        listEl.innerHTML = '<p class="text-dim">could not load videos</p>';
         return;
       }
 
-      let videos = [];
+      let allVideos = [];
       try {
-        videos = parseCSV(csvText);
+        allVideos = parseCSV(csvText);
       } catch (e) {
-        list.innerHTML = '<p class="text-dim">could not parse video data</p>';
+        listEl.innerHTML = '<p class="text-dim">could not parse video data</p>';
         return;
       }
 
-      // Filter only available videos
-      videos = videos.filter(v => v['Availability Status'] === 'available');
+      // Filter available videos
+      allVideos = allVideos.filter(v => v['Availability Status'] === 'available');
+      allVideos.sort((a, b) => parseInt(a.Position) - parseInt(b.Position));
 
-      if (videos.length === 0) {
-        list.innerHTML = '<p class="text-dim">no videos yet</p>';
+      if (allVideos.length === 0) {
+        listEl.innerHTML = '<p class="text-dim">no videos yet</p>';
         return;
       }
 
-      // Sort by position
-      videos.sort((a, b) => parseInt(a.Position) - parseInt(b.Position));
+      const shortsVideos = allVideos.filter(v => isShort(v));
+      const normalVideos = allVideos.filter(v => !isShort(v));
 
-      // Build video grid
-      const fragment = document.createDocumentFragment();
-      
-      videos.forEach(video => {
-        const videoId = video['Video ID'];
-        const title = video['Video Title'];
-        const duration = video['Duration'];
-        const views = video['Views'];
-        const publishDate = video['Publish Date'];
-        const thumbnail = video['Thumbnail URL'];
-        
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video-item';
-        
-        videoItem.innerHTML = '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer" class="video-link">' +
-          '<div class="video-thumbnail" style="background-image: url(\'' + thumbnail + '\')">' +
-          '<span class="video-duration">' + formatDuration(duration) + '</span>' +
-          '<span class="video-views">' + formatViews(views) + ' views</span>' +
-          '</div>' +
-          '<div class="video-info">' +
-          '<h3 class="video-title">' + title + '</h3>' +
-          '<div class="video-meta">' +
-          '<span class="video-date">' + formatDate(publishDate) + '</span>' +
-          '<span class="video-separator">|</span>' +
-          '<span class="video-duration-meta">' + formatDuration(duration) + '</span>' +
-          '</div>' +
-          '</div>' +
-          '</a>';
-        
-        fragment.appendChild(videoItem);
+      countNormalEl.textContent = normalVideos.length;
+      countShortsEl.textContent = shortsVideos.length;
+      countEl.textContent = `(${allVideos.length})`;
+
+      let currentFilter = 'all';
+      let currentView = 'tiles';
+
+      function renderVideos() {
+        let targetVideos = allVideos;
+        if (currentFilter === 'normal') targetVideos = normalVideos;
+        if (currentFilter === 'shorts') targetVideos = shortsVideos;
+
+        if (targetVideos.length === 0) {
+          listEl.innerHTML = '<p class="text-dim">no videos found in this category</p>';
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        targetVideos.forEach(video => {
+          const videoId = video['Video ID'];
+          const title = video['Video Title'];
+          const duration = video['Duration'];
+          const views = video['Views'];
+          const publishDate = video['Publish Date'];
+          const thumbnail = video['Thumbnail URL'];
+
+          const item = document.createElement('div');
+          item.className = 'video-item';
+
+          item.innerHTML = `
+            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer" class="video-link">
+              <div class="video-thumbnail" style="background-image: url('${thumbnail}')">
+                <span class="video-duration">${formatDuration(duration)}</span>
+                <span class="video-views">${formatViews(views)} views</span>
+              </div>
+              <div class="video-info">
+                <h3 class="video-title">${title}</h3>
+                <div class="video-meta">
+                  <span class="video-date">${formatDate(publishDate)}</span>
+                  <span class="video-separator">|</span>
+                  <span class="video-duration-meta">${formatDuration(duration)}</span>
+                </div>
+              </div>
+            </a>
+          `;
+
+          fragment.appendChild(item);
+        });
+
+        listEl.innerHTML = '';
+        listEl.appendChild(fragment);
+      }
+
+      // Setup filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderVideos();
+        });
       });
 
-      list.innerHTML = '';
-      list.appendChild(fragment);
+      // Setup view switcher
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentView = btn.dataset.view;
+          
+          if (currentView === 'tiles') {
+            listEl.className = 'video-list tiles-view';
+          } else {
+            listEl.className = 'video-list list-view';
+          }
+        });
+      });
+
+      // Initial render
+      renderVideos();
     });
   </script>
 
