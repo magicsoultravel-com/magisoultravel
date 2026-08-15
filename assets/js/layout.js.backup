@@ -13,9 +13,6 @@ const MST_LAYOUT = {
     </div>
   </div>
 </header>
-<a href="index.html" class="favicon-link" title="Return to Home" aria-label="Magic Soul Travel — home">
-  <img src="assets/img/favicon.png" alt="Home" width="32" height="32">
-</a>
 <div class="flags-banner" id="flags-banner">
   <div class="flags-banner-content" id="flags-banner-content"></div>
 </div>

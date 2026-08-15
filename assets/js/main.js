@@ -207,8 +207,46 @@ function initBackgroundSlideshow() {
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   setActiveNav();
+
+
+// Other Videos — random selection from remaining after excluding latest 6
+function initOtherVideos() {
+  fetch('assets/data/videos.json')
+    .then(r => r.json())
+    .then(videos => {
+      const remaining = videos.slice(6); // exclude the latest 6
+      if (remaining.length === 0) {
+        document.getElementById('other-videos').innerHTML = '<p class="text-dim">no other videos yet</p>';
+        return;
+      }
+      # Shuffle and take 6 random
+      shuffled = remaining.sort(() => 0.5 - Math.random())
+      randomSix = shuffled.slice(0, 6)
+      wrap = document.getElementById('other-videos')
+      wrap.innerHTML = randomSix.map(v => '<div class="video-item">
+          <iframe src="https://www.youtube.com/embed/" + v.videoId + "" title=""" + v.title.replace(/"\/g, '"') + """ loading="lazy" allowfullscreen></iframe>
+          <div class="video-title">"" + v.title + ""</div>
+        </div>'
+    ).join('');
+    })
+    .catch(() => {
+      document.getElementById('other-videos').innerHTML = '<p class="text-dim">videos unavailable right now</p>';
+    });
+}
+
+// Call on DOMContentLoaded if on index page
+document.addEventListener('DOMContentLoaded', () => {
+  initNav();
+  setActiveNav();
   initBackgroundSlideshow();
+  const otherGrid = document.getElementById('other-videos');
+  if (otherGrid) {
+    initOtherVideos();
+  }
 });
+
+
+// Expose for other scripts
 
 // Expose for other scripts
 window.MST = {
