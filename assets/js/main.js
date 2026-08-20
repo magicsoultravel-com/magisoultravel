@@ -208,6 +208,16 @@ function formatDate(dateStr) {
   });
 }
 
+// Helper: shuffle array (Fisher-Yates)
+function shuffleArray(arr) {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // ----- Background slideshow -----
 function initBackgroundSlideshow() {
   const slideshow = document.createElement('div');
@@ -240,17 +250,25 @@ function initBackgroundSlideshow() {
     .then(images => {
       if (!images || images.length === 0) return;
 
-      let current = 0;
+      let shuffled = shuffleArray(images);
+      let currentIdx = 0;
+
       let activeLayer = layer1;
       let inactiveLayer = layer2;
 
-      // Show first image immediately
-      activeLayer.style.backgroundImage = `url('${images[current]}')`;
+      // Show first (random) image immediately
+      activeLayer.style.backgroundImage = `url('${shuffled[currentIdx]}')`;
       activeLayer.classList.add('active');
 
       function navigate(direction) {
-        current = (current + direction + images.length) % images.length;
-        inactiveLayer.style.backgroundImage = `url('${images[current]}')`;
+        currentIdx = (currentIdx + direction + shuffled.length) % shuffled.length;
+        
+        // If we're wrapping around to reshuffle
+        if (currentIdx === 0 && direction === 1) {
+          shuffled = shuffleArray(shuffled);
+        }
+
+        inactiveLayer.style.backgroundImage = `url('${shuffled[currentIdx]}')`;
         inactiveLayer.classList.add('active');
         activeLayer.classList.remove('active');
         // Swap layers for next transition
@@ -270,11 +288,6 @@ function initBackgroundSlideshow() {
     });
 }
 
-// ----- Init on DOM ready -----
-document.addEventListener('DOMContentLoaded', () => {
-  initNav();
-  setActiveNav();
-});
 
 // Other Videos — random selection from remaining after excluding latest 6
 function initOtherVideos() {
@@ -323,5 +336,6 @@ window.MST = {
   autolink,
   escapeHtml,
   formatDate,
-  showLoading
+  showLoading,
+  shuffleArray
 };
