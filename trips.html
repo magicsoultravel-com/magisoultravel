@@ -17,7 +17,16 @@
       <section class="section">
         <h2>trips</h2>
         <p class="hint">click any trip title to expand notes · red lines show flight tracks · <a href="trips-map.html">view all on map</a></p>
-        <div class="trip-grid" id="trip-grid"></div>
+        <div class="carousel-container trip-carousel-container" id="trip-carousel">
+          <button class="carousel-control prev-btn" aria-label="Previous trip">&lt;</button>
+          <div class="carousel-inner">
+            <!-- carousel-group divs will be inserted here -->
+          </div>
+          <button class="carousel-control next-btn" aria-label="Next trip">&gt;</button>
+          <div class="carousel-dots">
+            <!-- dots will be inserted here -->
+          </div>
+        </div>
       </section>
     </div>
   </main>
@@ -29,19 +38,19 @@
   <script src="assets/js/gpx-maps.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      const tripGrid = document.getElementById('trip-grid');
-      if (!tripGrid) return;
+      const carouselContainer = document.getElementById('trip-carousel');
+      if (!carouselContainer) return;
 
       let trips = [];
       try {
         trips = await (await fetch('assets/data/trips.json')).json();
       } catch (e) {
-        tripGrid.innerHTML = '<p class="text-dim">could not load trips</p>';
+        carouselContainer.innerHTML = '<p class="text-dim">could not load trips</p>';
         return;
       }
 
       if (trips.length === 0) {
-        tripGrid.innerHTML = '<p class="text-dim">no trips yet</p>';
+        carouselContainer.innerHTML = '<p class="text-dim">no trips yet</p>';
         return;
       }
 
@@ -51,8 +60,8 @@
         return div.innerHTML;
       }
 
-      // Render trip cards in grid
-      tripGrid.innerHTML = trips.map(trip => {
+      // Generate card templates
+      const cardTemplates = trips.map(trip => {
         const page = trip.page || `trip-${trip.id}.html`;
         return `
           <div class="trip-card" id="${trip.id}">
@@ -79,23 +88,126 @@
             </div>
           </div>
         `;
-      }).join('');
+      });
 
-      // Lazy-load maps using IntersectionObserver
+      // Group cards into sets of 2 for carousel slides
+      const groups = [];
+      for (let i = 0; i < cardTemplates.length; i += 2) {
+        const groupCards = cardTemplates.slice(i, i + 2);
+        groups.push('<div class="carousel-group">' + groupCards.join('') + '</div>');
+      }
+
+      // Insert groups into carousel inner
+      const inner = carouselContainer.querySelector('.carousel-inner');
+      inner.innerHTML = groups.join('');
+
+      // Lazy-load maps using IntersectionObserver on carousel groups
       const mapObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const mapDiv = entry.target;
-            const gpxPath = mapDiv.dataset.gpx;
-            if (gpxPath) {
-              MST_MAPS.renderTrack(mapDiv.id, gpxPath);
-            }
-            mapObserver.unobserve(mapDiv);
+            const group = entry.target;
+            const maps = group.querySelectorAll('.trip-map');
+            maps.forEach(map => {
+              const gpxPath = map.dataset.gpx;
+              if (gpxPath) {
+                MST_MAPS.renderTrack(map.id, gpxPath);
+              }
+            });
+            mapObserver.unobserve(group);
           }
         });
       }, { rootMargin: '100px' });
 
-      tripGrid.querySelectorAll('.trip-map').forEach(map => mapObserver.observe(map));
+      // Observe all groups for map lazy-loading
+      const allGroups = inner.querySelectorAll('.carousel-group');
+      allGroups.forEach(group => mapObserver.observe(group));
+
+      // Initialize carousel with autoplay
+      const carousel = MST.initCarousel(carouselContainer);
+      if (!carousel) return;
+
+      // --- Continuous smooth autoscroll (RAF-based, no more stop-and-go) ---
+      const scrollSpeed = 35; // px/sec — gentle seamless glide
+      const origTransition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+      inner.style.transition = 'none'; // RAF drives the transform during auto
+
+      const autoscroll = MST.startContinuousAutoscroll(carousel, inner, carouselContainer, scrollSpeed);
+
+      // Helper to temporarily allow a CSS-animated goTo, then resume RAF
+      let snapTimeout = null;
+
+      const snapTo = (index) => {
+        autoscroll.pause();
+        if (snapTimeout) clearTimeout(snapTimeout);
+        inner.style.transition = origTransition;
+        carousel.goTo(index);
+        snapTimeout = setTimeout(() => {
+          inner.style.transition = 'none';
+          autoscroll.resume();
+          snapTimeout = null;
+        }, 550);
+      };
+
+      // Pause / resume on hover
+      carouselContainer.addEventListener('mouseenter', () => autoscroll.pause());
+      carouselContainer.addEventListener('mouseleave', () => {
+        if (snapTimeout) return; // let the snap finish first
+        autoscroll.resume();
+      });
+
+      // Override button listeners so they snap with animation
+      carouselContainer.querySelector('.prev-btn')?.addEventListener('click', () => {
+        snapTo(carousel.current() - 1);
+      });
+      carouselContainer.querySelector('.next-btn')?.addEventListener('click', () => {
+        snapTo(carousel.current() + 1);
+      });
+
+      // Drag-to-navigate — grab the tile body (title + explore button excluded)
+      let dragStartX = 0;
+      let dragging = false;
+      let dragMoved = false;
+      let dragDelta = 0;
+
+      const endDrag = () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.userSelect = '';
+        carouselContainer.style.cursor = '';
+        if (dragMoved && Math.abs(dragDelta) > 60) {
+          snapTo(carousel.current() + (dragDelta < 0 ? 1 : -1));
+        } else {
+          snapTo(carousel.current());
+        }
+        dragMoved = false;
+        dragDelta = 0;
+      };
+
+      inner.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        if (e.target.closest('.trip-title') || e.target.closest('.trip-actions')) return;
+        autoscroll.pause();
+        if (snapTimeout) { clearTimeout(snapTimeout); snapTimeout = null; }
+        inner.style.transition = 'none';
+        dragStartX = e.clientX;
+        dragging = true;
+        dragMoved = false;
+        dragDelta = 0;
+        document.body.style.userSelect = 'none';
+        carouselContainer.style.cursor = 'grabbing';
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        dragDelta = e.clientX - dragStartX;
+        if (Math.abs(dragDelta) > 6) dragMoved = true;
+        const trackWidth = inner.clientWidth || 1;
+        const pct = (dragDelta / trackWidth) * 100;
+        inner.style.transform = `translateX(${-carousel.current() * 100 + pct}%)`;
+      });
+
+      document.addEventListener('mouseup', endDrag);
+      carouselContainer.addEventListener('mouseleave', endDrag);
     });
   </script>
 </body>

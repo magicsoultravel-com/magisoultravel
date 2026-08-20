@@ -134,8 +134,8 @@ const MST_MAPS = {
 
       L.control.layers(baseLayers, {}, { collapsed: false, position: 'topright' }).addTo(map);
 
-      // Default to satellite view
-      satelliteLayer.addTo(map);
+      // Default to map view
+      osmLayer.addTo(map);
 
       // Fit bounds to show the full track
       map.fitBounds(bounds, { padding: [40, 40] });

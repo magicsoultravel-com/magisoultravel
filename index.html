@@ -226,7 +226,7 @@
           if (grid) grid.innerHTML += '<p class="text-dim">blog posts unavailable right now</p>';
         });
 
-      // Trips carousel — fetch and render trip cards in groups of 3 with auto-spinning
+      // Trips carousel — fetch and render trip cards in groups of 2 with auto-spin
       fetch('assets/data/trips.json')
         .then(r => r.json())
         .then(trips => {
@@ -251,10 +251,10 @@
             `;
           });
 
-          // Group cards into sets of 3 for carousel slides
+          // Group cards into sets of 2 for carousel slides
           const groups = [];
-          for (let i = 0; i < cardTemplates.length; i += 3) {
-            const groupCards = cardTemplates.slice(i, i + 3);
+          for (let i = 0; i < cardTemplates.length; i += 2) {
+            const groupCards = cardTemplates.slice(i, i + 2);
             groups.push('<div class="carousel-group">' + groupCards.join('') + '</div>');
           }
 
@@ -287,29 +287,88 @@
           const carousel = MST.initCarousel(carouselContainer);
           if (!carousel) return;
 
-          // Autoplay: spin continuously every 5 seconds
-          let autoplayTimer = null;
-          let isHovering = false;
+          // --- Continuous smooth autoscroll (RAF-based, no more stop-and-go) ---
+          const scrollSpeed = 35; // px/sec — gentle seamless glide
+          const origTransition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+          inner.style.transition = 'none'; // RAF drives the transform during auto
 
-          const startAutoplay = () => {
-            if (autoplayTimer) clearInterval(autoplayTimer);
-            autoplayTimer = setInterval(() => {
-              if (!isHovering) {
-                carousel.goTo(carousel.current() + 1);
-              }
-            }, 5000);
+          const autoscroll = MST.startContinuousAutoscroll(carousel, inner, carouselContainer, scrollSpeed);
+
+          // Helper to temporarily allow a CSS-animated goTo, then resume RAF
+          let snapTimeout = null;
+
+          const snapTo = (index) => {
+            autoscroll.pause();
+            if (snapTimeout) clearTimeout(snapTimeout);
+            inner.style.transition = origTransition;
+            carousel.goTo(index);
+            snapTimeout = setTimeout(() => {
+              inner.style.transition = 'none';
+              autoscroll.resume();
+              snapTimeout = null;
+            }, 550);
           };
 
-          // Pause autoplay on hover
-          carouselContainer.addEventListener('mouseenter', () => {
-            isHovering = true;
-          });
-
+          // Pause / resume on hover
+          carouselContainer.addEventListener('mouseenter', () => autoscroll.pause());
           carouselContainer.addEventListener('mouseleave', () => {
-            isHovering = false;
+            if (snapTimeout) return; // let the snap finish first
+            autoscroll.resume();
           });
 
-          startAutoplay();
+          // Override button listeners so they snap with animation
+          carouselContainer.querySelector('.prev-btn')?.addEventListener('click', () => {
+            snapTo(carousel.current() - 1);
+          });
+          carouselContainer.querySelector('.next-btn')?.addEventListener('click', () => {
+            snapTo(carousel.current() + 1);
+          });
+
+          // Drag-to-navigate — grab the tile body (title + explore button excluded)
+          let dragStartX = 0;
+          let dragging = false;
+          let dragMoved = false;
+          let dragDelta = 0;
+
+          const endDrag = () => {
+            if (!dragging) return;
+            dragging = false;
+            document.body.style.userSelect = '';
+            carouselContainer.style.cursor = '';
+            if (dragMoved && Math.abs(dragDelta) > 60) {
+              snapTo(carousel.current() + (dragDelta < 0 ? 1 : -1));
+            } else {
+              snapTo(carousel.current());
+            }
+            dragMoved = false;
+            dragDelta = 0;
+          };
+
+          inner.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            if (e.target.closest('.trip-title') || e.target.closest('.trip-actions')) return;
+            autoscroll.pause();
+            if (snapTimeout) { clearTimeout(snapTimeout); snapTimeout = null; }
+            inner.style.transition = 'none';
+            dragStartX = e.clientX;
+            dragging = true;
+            dragMoved = false;
+            dragDelta = 0;
+            document.body.style.userSelect = 'none';
+            carouselContainer.style.cursor = 'grabbing';
+          });
+
+          document.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            dragDelta = e.clientX - dragStartX;
+            if (Math.abs(dragDelta) > 6) dragMoved = true;
+            const trackWidth = inner.clientWidth || 1;
+            const pct = (dragDelta / trackWidth) * 100;
+            inner.style.transform = `translateX(${-carousel.current() * 100 + pct}%)`;
+          });
+
+          document.addEventListener('mouseup', endDrag);
+          carouselContainer.addEventListener('mouseleave', endDrag);
         })
         .catch(() => {
           const carouselContainer = document.getElementById('trip-carousel');

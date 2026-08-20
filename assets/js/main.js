@@ -107,6 +107,73 @@ function initCarousel(container) {
   return { goTo, current: () => current };
 }
 
+// ----- Continuous smooth autoscroll (requestAnimationFrame-based) -----
+// Moves the carousel at a constant pixel-per-second speed so there is
+// never a "pause-then-snap" stepping effect.
+// Uses a clone of the first slide for seamless infinite wrap-around.
+function startContinuousAutoscroll(carousel, inner, container, speedPxPerSec) {
+  const realSlides = container.querySelectorAll('.carousel-group').length;
+  if (realSlides <= 1) return;                // nothing to scroll
+
+  // Clone the first group and append it — when the RAF scroll passes the
+  // last real slide it will show the clone. At that exact moment we
+  // reset the transform to slide 0. Because clone === slide 0 the user
+  // never sees a jump.
+  const allOriginal = container.querySelectorAll('.carousel-group');
+  const clone = allOriginal[0].cloneNode(true);
+  clone.style.transform = '';                  // discard any stale inline styles
+  // Strip map ids from the clone so Leaflet never tries to initialise on a
+  // duplicate id when the clone enters the viewport.
+  clone.querySelectorAll('.trip-map').forEach(el => el.removeAttribute('id'));
+  inner.appendChild(clone);
+
+  let offset = 0;
+  let rafId = null;
+  let running = true;
+
+  const pause = () => { running = false; };
+  const resume = () => { running = true; };
+
+  // RAF owns the transform — the CSS transition would add latency
+  inner.style.transition = 'none';
+
+  function frame(timestamp, lastTime) {
+    if (!running) {
+      rafId = requestAnimationFrame((t) => frame(t, t));
+      return;
+    }
+    const delta = lastTime ? (timestamp - lastTime) / 1000 : 0.016;
+    offset += speedPxPerSec * delta;
+
+    const innerWidth = inner.clientWidth || 1;
+    const offsetPct = (offset / innerWidth) * 100;
+
+    if (offsetPct >= 100) {
+      offset = 0;
+      const next = carousel.current() + 1;
+      if (next >= realSlides) {
+        // Past the last real slide — seamless wrap back to the first.
+        // The clone (pixel-identical to slide 0) is currently visible,
+        // so the instant reset is imperceptible.
+        inner.style.transition = 'none';
+        carousel.goTo(0);
+        inner.style.transform = 'translateX(0%)';
+      } else {
+        carousel.goTo(next);
+        inner.style.transform = `translateX(-${next * 100}%)`;
+      }
+    } else {
+      inner.style.transform = `translateX(-${carousel.current() * 100 + offsetPct}%)`;
+    }
+
+    rafId = requestAnimationFrame((t) => frame(t, timestamp));
+  }
+
+  rafId = requestAnimationFrame((t) => frame(t, t));
+
+  return { stop: () => { cancelAnimationFrame(rafId); }, pause, resume };
+}
+
 // ----- Skeleton loader helper -----
 function showLoading(el, message = 'loading') {
   if (!el) return;
@@ -252,6 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.MST = {
   showToast,
   initCarousel,
+  startContinuousAutoscroll,
   autolink,
   escapeHtml,
   formatDate,

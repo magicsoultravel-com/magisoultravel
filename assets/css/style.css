@@ -424,10 +424,10 @@ img {
 
 .carousel-container {
   position: relative;
-  max-width: 920px;
-  margin: 20px auto;
+  max-width: 1200px;
+  margin: 24px auto 0;
   overflow: hidden;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 0 50px;
   background: var(--panel-solid);
@@ -444,11 +444,39 @@ img {
   min-width: 100%;
   box-sizing: border-box;
   flex-shrink: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
   gap: 20px;
   padding: 20px 0;
   align-items: start;
+  justify-content: flex-start;
+}
+
+/* Trips carousel and 2 items per slide - taller tiles, minimal white space */
+.trip-carousel-container .carousel-group {
+  gap: 20px;
+  justify-content: center;
+  align-items: stretch;
+  padding: 16px 0;
+}
+
+.trip-carousel-container .carousel-group .trip-card {
+  flex: 0 0 calc(50% - 12px);
+  max-width: calc(50% - 12px);
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-carousel-container .carousel-group .trip-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-carousel-container .carousel-group .trip-map {
+  flex-shrink: 0;
+  margin-top: auto;
+  height: 340px;
 }
 
 .carousel-control {
@@ -506,16 +534,19 @@ img {
 .trip-carousel-container {
   position: relative;
   padding: 0 !important;
+  border: 1px solid var(--border);
+  background: rgba(13, 17, 23, 0.35);
 }
 
 .trip-carousel-container .carousel-control {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 6px 10px;
-  font-size: 1.2em;
-  border-radius: 4px;
-  width: 32px;
-  height: 32px;
+  font-size: 1.4em;
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,12 +555,12 @@ img {
 }
 
 .trip-carousel-container .carousel-control:hover {
-  background: rgba(0, 0, 0, 0.7);
-  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.85);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .trip-carousel-container .carousel-dots {
-  padding: 8px 0;
+  padding: 6px 0 14px;
   gap: 6px;
 }
 
@@ -542,6 +573,34 @@ img {
 .trip-carousel-container .carousel-dot.active {
   background: var(--accent);
   transform: scale(1.3);
+}
+
+/* Drag cursor for carousel */
+.carousel-container.grabbing {
+  cursor: grabbing;
+}
+
+.trip-carousel-container .carousel-group {
+  cursor: grab;
+}
+
+.trip-carousel-container .carousel-group:hover {
+  cursor: grabbing;
+}
+
+.trip-carousel-container .carousel-group .trip-title a,
+.trip-carousel-container .carousel-group .trip-actions {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .trip-carousel-container .carousel-group .trip-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .trip-carousel-container .carousel-group .trip-map {
+    height: 300px;
+  }
 }
 
 
@@ -1406,10 +1465,12 @@ main,
 }
 
 .trip-map {
+  position: relative;
   width: 100%;
   height: 220px;
   border-radius: var(--radius-sm);
   margin-bottom: 14px;
+  z-index: 0;
 }
 
 .trip-actions {

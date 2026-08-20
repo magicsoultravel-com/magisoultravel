@@ -94,8 +94,8 @@
         // Add layer control for all map styles
         L.control.layers(mapStyles, {}, { collapsed: false, position: 'topright' }).addTo(map);
 
-        // Default to Satellite view
-        mapStyles['Satellite'].addTo(map);
+        // Default to Map view
+        mapStyles['Map'].addTo(map);
         
         // Color palette for different trips
         const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
