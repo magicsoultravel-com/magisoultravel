@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the next trip — blog | magic soul travel</title>
+  <meta name="description" content="leads to SKB from SKB ferry to SXM on Mon, Fri, Sat, Sun -&gt; from SKB daily flights to SXM -&gt; from SFM daily flights t...">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <div id="post-container">
+          <article class="post-item expanded">
+            <span class="post-date">27 Aug 2025</span>
+            <h2>the next trip</h2>
+            <div class="post-content">
+              <div class="post-full">leads to SKB
+from SKB ferry to SXM on Mon, Fri, Sat, Sun -> from SKB daily flights to SXM -> from SFM daily flights to PTP -> from PTP close to DOM
+
+getting back to SKB is possible from DOM, ANU, both have connections</div>
+            </div>
+            <p><a href="index.html" class="read-more-toggle">← back to home</a></p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('post-container');
+      if (container) {
+        container.querySelectorAll('a').forEach(a => {
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener noreferrer');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

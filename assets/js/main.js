@@ -115,7 +115,7 @@ function showLoading(el, message = 'loading') {
 
 // ----- Autolink URLs in text (used for blog posts) -----
 function autolink(text) {
-  const urlPattern = /\b(?:https?:\/\/|www\.)\S+\b/g;
+  const urlPattern = /\b(?:https?:\/\/|www\.)\\S+\b/g;
   return text.replace(urlPattern, (url) => {
     const href = url.startsWith('http') ? url : `https://${url}`;
     return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
@@ -207,7 +207,7 @@ function initBackgroundSlideshow() {
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
   setActiveNav();
-
+});
 
 // Other Videos — random selection from remaining after excluding latest 6
 function initOtherVideos() {
@@ -219,15 +219,18 @@ function initOtherVideos() {
         document.getElementById('other-videos').innerHTML = '<p class="text-dim">no other videos yet</p>';
         return;
       }
-      # Shuffle and take 6 random
-      shuffled = remaining.sort(() => 0.5 - Math.random())
-      randomSix = shuffled.slice(0, 6)
-      wrap = document.getElementById('other-videos')
-      wrap.innerHTML = randomSix.map(v => '<div class="video-item">
-          <iframe src="https://www.youtube.com/embed/" + v.videoId + "" title=""" + v.title.replace(/"\/g, '"') + """ loading="lazy" allowfullscreen></iframe>
-          <div class="video-title">"" + v.title + ""</div>
-        </div>'
-    ).join('');
+      // Shuffle and take 6 random
+      const shuffled = remaining.sort(() => 0.5 - Math.random());
+      const randomSix = shuffled.slice(0, 6);
+      const wrap = document.getElementById('other-videos');
+      wrap.innerHTML = randomSix.map(v => `
+        <div class="video-item">
+          <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer">
+            <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allowfullscreen style="pointer-events: none;"></iframe>
+            <div class="video-title">${escapeHtml(v.title)}</div>
+          </a>
+        </div>
+      `).join('');
     })
     .catch(() => {
       document.getElementById('other-videos').innerHTML = '<p class="text-dim">videos unavailable right now</p>';
@@ -244,9 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initOtherVideos();
   }
 });
-
-
-// Expose for other scripts
 
 // Expose for other scripts
 window.MST = {
