@@ -165,10 +165,147 @@
           const latest = videos.slice(0, 6);
           const remaining = videos.slice(6);
 
-          // Render latest videos (with direct inline playback)
+          // Helper to open floating PiP player parked in the corner (draggable + resizable from edges)
+          function openFloatingPiP(videoId, title) {
+            const existing = document.getElementById('floating-pip-container');
+            if (existing) existing.remove();
+
+            const pip = document.createElement('div');
+            pip.className = 'floating-pip-container';
+            pip.id = 'floating-pip-container';
+
+            pip.innerHTML = `
+              <div class="floating-pip-resize-handle" id="pip-resize-tl" data-dir="tl"></div>
+              <div class="floating-pip-resize-handle" id="pip-resize-tr" data-dir="tr" style="left: auto; right: 0; cursor: nesw-resize;"></div>
+              <div class="floating-pip-resize-handle" id="pip-resize-bl" data-dir="bl" style="top: auto; bottom: 0; cursor: nesw-resize;"></div>
+              <div class="floating-pip-header" id="floating-pip-header">
+                <div class="floating-pip-title" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+                <button class="floating-pip-close" aria-label="Close PiP">&times;</button>
+              </div>
+              <div class="floating-pip-body">
+                <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" title="${escapeHtml(title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+            `;
+
+            pip.querySelector('.floating-pip-close').addEventListener('click', () => {
+              pip.remove();
+            });
+
+            // Make draggable by header
+            const header = pip.querySelector('#floating-pip-header');
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            header.addEventListener('mousedown', (e) => {
+              if (e.target.closest('.floating-pip-close')) return;
+              isDragging = true;
+              startX = e.clientX;
+              startY = e.clientY;
+
+              const rect = pip.getBoundingClientRect();
+              pip.style.left = rect.left + 'px';
+              pip.style.top = rect.top + 'px';
+              pip.style.width = rect.width + 'px';
+              pip.style.height = rect.height + 'px';
+              pip.style.bottom = 'auto';
+              pip.style.right = 'auto';
+
+              initialLeft = rect.left;
+              initialTop = rect.top;
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+              e.preventDefault();
+            });
+
+            function onMouseMove(e) {
+              if (!isDragging) return;
+              const dx = e.clientX - startX;
+              const dy = e.clientY - startY;
+              pip.style.left = (initialLeft + dx) + 'px';
+              pip.style.top = (initialTop + dy) + 'px';
+            }
+
+            function onMouseUp() {
+              isDragging = false;
+              document.removeEventListener('mousemove', onMouseMove);
+              document.removeEventListener('mouseup', onMouseUp);
+            }
+
+            // Enable resizing from all corners/edges
+            let isResizing = false;
+            let resizeDir = '';
+            let startW, startH, startClientX, startClientY;
+
+            pip.querySelectorAll('.floating-pip-resize-handle').forEach(handle => {
+              handle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                resizeDir = e.target.dataset.dir;
+                startClientX = e.clientX;
+                startClientY = e.clientY;
+
+                const rect = pip.getBoundingClientRect();
+                startW = rect.width;
+                startH = rect.height;
+                initialLeft = rect.left;
+                initialTop = rect.top;
+
+                pip.style.left = initialLeft + 'px';
+                pip.style.top = initialTop + 'px';
+                pip.style.width = startW + 'px';
+                pip.style.height = startH + 'px';
+                pip.style.bottom = 'auto';
+                pip.style.right = 'auto';
+
+                document.addEventListener('mousemove', onResizeMove);
+                document.addEventListener('mouseup', onResizeUp);
+                e.preventDefault();
+                e.stopPropagation();
+              });
+            });
+
+            function onResizeMove(e) {
+              if (!isResizing) return;
+              const dx = e.clientX - startClientX;
+              const dy = e.clientY - startClientY;
+
+              if (resizeDir === 'tl') {
+                const newW = Math.max(280, startW - dx);
+                const newH = Math.max(180, startH - dy);
+                pip.style.width = newW + 'px';
+                pip.style.height = newH + 'px';
+                pip.style.left = (initialLeft + (startW - newW)) + 'px';
+                pip.style.top = (initialTop + (startH - newH)) + 'px';
+              } else if (resizeDir === 'tr') {
+                const newW = Math.max(280, startW + dx);
+                const newH = Math.max(180, startH - dy);
+                pip.style.width = newW + 'px';
+                pip.style.height = newH + 'px';
+                pip.style.top = (initialTop + (startH - newH)) + 'px';
+              } else if (resizeDir === 'bl') {
+                const newW = Math.max(280, startW - dx);
+                const newH = Math.max(180, startH + dy);
+                pip.style.width = newW + 'px';
+                pip.style.height = newH + 'px';
+                pip.style.left = (initialLeft + (startW - newW)) + 'px';
+              }
+            }
+
+            function onResizeUp() {
+              isResizing = false;
+              document.removeEventListener('mousemove', onResizeMove);
+              document.removeEventListener('mouseup', onResizeUp);
+            }
+
+            document.body.appendChild(pip);
+          }
+
+          // Render latest videos
           if (latestWrap) {
             latestWrap.innerHTML = latest.map(v => `
-              <div class="video-item">
+              <div class="video-item" data-video-id="${v.videoId}">
+                <button class="video-expand-btn" aria-label="Expand video" title="Enlarge video">⤢</button>
+                <button class="video-popout-btn" aria-label="Popout video" title="Pop out video window">🗗</button>
                 <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
                   <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
@@ -176,14 +313,34 @@
                 </div>
               </div>
             `).join('');
+
+            latestWrap.querySelectorAll('.video-expand-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.video-item');
+                const isExpanded = item.classList.toggle('expanded-card');
+                btn.textContent = isExpanded ? '⤡' : '⤢';
+                btn.title = isExpanded ? 'Reduce video' : 'Enlarge video';
+                if (isExpanded) {
+                  item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+              });
+            });
+
+            latestWrap.querySelectorAll('.video-popout-btn').forEach((btn, index) => {
+              btn.addEventListener('click', () => {
+                openFloatingPiP(latest[index].videoId, latest[index].title);
+              });
+            });
           }
 
-          // Render random 6 from remaining list (with direct inline playback)
+          // Render random 6 from remaining list (with direct inline playback, expand/collapse button + popout button)
           if (otherWrap) {
             const shuffled = [...remaining].sort(() => 0.5 - Math.random());
             const randomSix = shuffled.slice(0, 6);
             otherWrap.innerHTML = randomSix.map(v => `
-              <div class="video-item">
+              <div class="video-item" data-video-id="${v.videoId}">
+                <button class="video-expand-btn" aria-label="Expand video" title="Enlarge video">⤢</button>
+                <button class="video-popout-btn" aria-label="Popout video" title="Pop out video window">🗗</button>
                 <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
                   <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
@@ -191,6 +348,24 @@
                 </div>
               </div>
             `).join('');
+
+            otherWrap.querySelectorAll('.video-expand-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.video-item');
+                const isExpanded = item.classList.toggle('expanded-card');
+                btn.textContent = isExpanded ? '⤡' : '⤢';
+                btn.title = isExpanded ? 'Reduce video' : 'Enlarge video';
+                if (isExpanded) {
+                  item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+              });
+            });
+
+            otherWrap.querySelectorAll('.video-popout-btn').forEach((btn, index) => {
+              btn.addEventListener('click', () => {
+                openFloatingPiP(randomSix[index].videoId, randomSix[index].title);
+              });
+            });
           }
         })
         .catch(() => {

@@ -304,7 +304,8 @@ function initOtherVideos() {
       const randomSix = shuffled.slice(0, 6);
       const wrap = document.getElementById('other-videos');
       wrap.innerHTML = randomSix.map(v => `
-        <div class="video-item">
+        <div class="video-item" data-video-id="${v.videoId}">
+          <button class="video-expand-btn" aria-label="Expand video" title="Enlarge video">⤢</button>
           <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
             <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
@@ -312,6 +313,18 @@ function initOtherVideos() {
           </div>
         </div>
       `).join('');
+
+      wrap.querySelectorAll('.video-expand-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const item = e.target.closest('.video-item');
+          const isExpanded = item.classList.toggle('expanded-card');
+          btn.textContent = isExpanded ? '⤡' : '⤢';
+          btn.title = isExpanded ? 'Reduce video' : 'Enlarge video';
+          if (isExpanded) {
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      });
     })
     .catch(() => {
       document.getElementById('other-videos').innerHTML = '<p class="text-dim">videos unavailable right now</p>';
