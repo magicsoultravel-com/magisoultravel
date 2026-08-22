@@ -6,6 +6,25 @@ const MST_MAPS = {
   pendingTracks: [],
   leafletPromise: null,
 
+  // Custom marker icons for start/end points
+  createIcons() {
+    const playIcon = L.icon({
+      iconUrl: 'assets/img/markers/play-icon.svg',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -20]
+    });
+
+    const stopIcon = L.icon({
+      iconUrl: 'assets/img/markers/stop-icon.svg',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -20]
+    });
+
+    return { playIcon, stopIcon };
+  },
+
   loadLeaflet() {
     return new Promise((resolve) => {
       if (window.L) {
@@ -158,6 +177,21 @@ const MST_MAPS = {
           .bindPopup(wp.name)
           .addTo(map);
       });
+
+      // Add start/end markers for the track
+      if (trackPoints.length > 0) {
+        const { playIcon, stopIcon } = this.createIcons();
+        
+        // Start marker (green PLAY icon)
+        L.marker([trackPoints[0].lat, trackPoints[0].lng], { icon: playIcon })
+          .bindPopup('Start')
+          .addTo(map);
+        
+        // End marker (red STOP icon)
+        L.marker([trackPoints[trackPoints.length - 1].lat, trackPoints[trackPoints.length - 1].lng], { icon: stopIcon })
+          .bindPopup('End')
+          .addTo(map);
+      }
     } catch (err) {
       console.error(`Error rendering map ${mapId}:`, err);
       mapDiv.innerHTML = `<p style="color:#e74c3c; padding:20px;">Error loading track.</p>`;

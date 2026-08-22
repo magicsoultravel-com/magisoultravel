@@ -30,6 +30,7 @@ A static travel site built for GitHub Pages — Caribbean adventures, flight tra
 │   └── img/
 │       ├── favicon.png
 │       ├── backgrounds/  # rotating site background images
+│       ├── markers/      # map markers (PLAY/STOP icons for GPX tracks)
 │       └── gallery/      # gallery photos
 └── _legacy/              # original PHP dump (kept for reference)
 ```

@@ -100,6 +100,21 @@
         // Color palette for different trips
         const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
         
+        // Custom marker icons for start/end points
+        const playIcon = L.icon({
+          iconUrl: 'assets/img/markers/play-icon.svg',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -20]
+        });
+        
+        const stopIcon = L.icon({
+          iconUrl: 'assets/img/markers/stop-icon.svg',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -20]
+        });
+        
         // Collect all track points to compute combined bounds
         const allTrackPoints = [];
 
@@ -143,6 +158,15 @@
                 
                 // Tooltip on hover
                 polyline.bindTooltip(trip.title, { permanent: false });
+                
+                // Add start/end markers for this trip
+                L.marker(trackPoints[0], { icon: playIcon })
+                  .bindPopup(`Start: ${trip.title}`)
+                  .addTo(map);
+                
+                L.marker(trackPoints[trackPoints.length - 1], { icon: stopIcon })
+                  .bindPopup(`End: ${trip.title}`)
+                  .addTo(map);
               }
             })
             .catch(err => console.warn(`Could not load ${trip.file}:`, err));

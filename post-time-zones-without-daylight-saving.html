@@ -4,9 +4,128 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Time Zones without daylight saving — blog | magic soul travel</title>
-  <meta name="description" content="Region Time Zone UTC Offset Pacific / Honolulu Hawaii–Aleutian Standard Time (HST) UTC−10:00 America / Anchorage Alas...">
+  <meta name="description" content="Time zones that do not observe daylight saving time - a comprehensive list with current times and comparison tools">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
   <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Timezone Checker Styles - Compact */
+    .tz-checker {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .tz-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+      display: block;
+    }
+    .tz-display {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tz-name {
+      color: var(--accent);
+      font-size: 0.85rem;
+    }
+    .tz-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      flex-direction: row;
+    }
+    .tz-select-wrapper, .tz-slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .tz-select {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font-size: 0.8rem;
+      min-width: 160px;
+      cursor: pointer;
+    }
+    .tz-select option {
+      background: var(--panel-solid);
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+    .tz-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tz-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 3px;
+      outline: none;
+      opacity: 0.8;
+    }
+    .tz-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+    .tz-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+    .tz-value {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      min-width: 45px;
+      text-align: center;
+    }
+    .tz-comparison {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .tz-alt {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      background: var(--panel);
+      border-radius: 4px;
+    }
+    .tz-alt .tz-label {
+      font-size: 0.7rem;
+      margin-bottom: 2px;
+    }
+    .tz-alt .tz-display {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+  </style>
 </head>
 <body>
 
@@ -19,6 +138,54 @@
           <article class="post-item expanded">
             <span class="post-date">10 Oct 2025</span>
             <h2>Time Zones without daylight saving</h2>
+            
+            <!-- Timezone Checker Widget -->
+            <div class="tz-checker">
+              <div class="tz-label">Your Local Time</div>
+              <div class="tz-display">
+                <span id="local-time">--:--</span>
+                <span class="tz-name" id="local-tz-name">Detecting...</span>
+              </div>
+              
+              <div class="tz-controls">
+                <div class="tz-select-wrapper">
+                  <label class="tz-label">Compare:</label>
+                  <select id="tz-select" class="tz-select">
+                    <option value="">--</option>
+                    <option value="Pacific/Auckland">Pacific / Auckland</option>
+                    <option value="Asia/Tokyo">Asia / Tokyo</option>
+                    <option value="Asia/Shanghai">Asia / Shanghai</option>
+                    <option value="Asia/Kolkata">Asia / Kolkata</option>
+                    <option value="Europe/London">Europe / London</option>
+                    <option value="Asia/Dubai">Asia / Dubai</option>
+                  </select>
+                </div>
+                <div class="tz-slider-wrapper">
+                  <label class="tz-label">Adjust</label>
+                  <div class="tz-slider-container">
+                    <span class="tz-value" id="tz-hrs-value1">-12h</span>
+                    <input type="range" id="tz-slider" class="tz-slider" min="0" max="48" value="24" step="6">
+                    <span class="tz-value" id="tz-hrs-value2">+12h</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="tz-comparison" id="tz-comparison" style="display: none;">
+                <div class="tz-alt">
+                  <span class="tz-label">Adjusted</span>
+                  <div class="tz-display">
+                    <span id="adjusted-time">--:--</span>
+                  </div>
+                </div>
+                <div class="tz-alt">
+                  <span class="tz-label">Comparison</span>
+                  <div class="tz-display">
+                    <span id="comparison-time">--:--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div class="post-content">
               <div class="post-full"><table border="1">
   <tr>
@@ -26,30 +193,46 @@
     <th>Time Zone</th>
     <th>UTC Offset</th>
   </tr>
-  <tr><td>Pacific / Honolulu</td><td>Hawaii–Aleutian Standard Time (HST)</td><td>UTC−10:00</td></tr>
-  <tr><td>America / Anchorage</td><td>Alaska Standard Time (AKST)</td><td>UTC−09:00</td></tr>
-  <tr><td>America / Los Angeles</td><td>Pacific Time (PT)</td><td>UTC−08:00</td></tr>
-  <tr><td>America / Denver</td><td>Mountain Time (MT)</td><td>UTC−07:00</td></tr>
-  <tr><td>America / Chicago</td><td>Central Time (CT)</td><td>UTC−06:00</td></tr>
-  <tr><td>America / New York</td><td>Eastern Time (ET)</td><td>UTC−05:00</td></tr>
-  <tr><td>America / Caracas</td><td>Venezuela Time (VET)</td><td>UTC−04:00</td></tr>
-  <tr><td>America / Buenos Aires</td><td>Argentina Time (ART)</td><td>UTC−03:00</td></tr>
-  <tr><td>Atlantic / Azores</td><td>Azores Standard Time (AZOT)</td><td>UTC−01:00</td></tr>
-  <tr><td>Europe / London</td><td>Greenwich Mean Time (GMT)</td><td>UTC±00:00</td></tr>
-  <tr><td>Europe / Warsaw</td><td>Central European Time (CET)</td><td>UTC+01:00</td></tr>
-  <tr><td>Europe / Athens</td><td>Eastern European Time (EET)</td><td>UTC+02:00</td></tr>
-  <tr><td>Africa / Nairobi</td><td>East Africa Time (EAT)</td><td>UTC+03:00</td></tr>
-  <tr><td>Asia / Dubai</td><td>Gulf Standard Time (GST)</td><td>UTC+04:00</td></tr>
-  <tr><td>Asia / Karachi</td><td>Pakistan Standard Time (PKT)</td><td>UTC+05:00</td></tr>
-  <tr><td>Asia / Dhaka</td><td>Bangladesh Standard Time (BST)</td><td>UTC+06:00</td></tr>
-  <tr><td>Asia / Bangkok</td><td>Indochina Time (ICT)</td><td>UTC+07:00</td></tr>
-  <tr><td>Asia / Hong Kong</td><td>Hong Kong Time (HKT)</td><td>UTC+08:00</td></tr>
-  <tr><td>Asia / Tokyo</td><td>Japan Standard Time (JST)</td><td>UTC+09:00</td></tr>
-  <tr><td>Australia / Sydney</td><td>Australian Eastern Time (AET)</td><td>UTC+10:00</td></tr>
-  <tr><td>Pacific / Noumea</td><td>New Caledonia Time (NCT)</td><td>UTC+11:00</td></tr>
-  <tr><td>Pacific / Auckland</td><td>New Zealand Time (NZT)</td><td>UTC+12:00</td></tr>
+  <tr><td>Pacific / Kiritimati</td><td>Line Island Time</td><td>UTC+14:00</td></tr>
+  <tr><td>Pacific / Apia</td><td>Samoa Standard Time</td><td>UTC+13:00</td></tr>
+  <tr><td>Pacific / Tongatapu</td><td>Tonga Time</td><td>UTC+13:00</td></tr>
+  <tr><td>Pacific / Noumea</td><td>New Caledonia Time</td><td>UTC+11:00</td></tr>
+  <tr><td>Pacific / Norfolk</td><td>Norfolk Island Time</td><td>UTC+11:00</td></tr>
+  <tr><td>Pacific / Port Moresby</td><td>Papua New Guinea Time</td><td>UTC+10:00</td></tr>
+  <tr><td>Australia / Adelaide</td><td>Australian Central Standard Time</td><td>UTC+09:30</td></tr>
+  <tr><td>Asia / Tokyo</td><td>Japan Standard Time</td><td>UTC+09:00</td></tr>
+  <tr><td>Asia / Seoul</td><td>Korea Standard Time</td><td>UTC+09:00</td></tr>
+  <tr><td>Asia / Taipei</td><td>Taiwan Standard Time</td><td>UTC+08:00</td></tr>
+  <tr><td>Asia / Hong Kong</td><td>Hong Kong Time</td><td>UTC+08:00</td></tr>
+  <tr><td>Asia / Shanghai</td><td>China Standard Time</td><td>UTC+08:00</td></tr>
+  <tr><td>Asia / Singapore</td><td>Singapore Standard Time</td><td>UTC+08:00</td></tr>
+  <tr><td>Australia / Perth</td><td>Australian Western Standard Time</td><td>UTC+08:00</td></tr>
+  <tr><td>Asia / Yangon</td><td>Myanmar Standard Time</td><td>UTC+06:30</td></tr>
+  <tr><td>Asia / Dhaka</td><td>Bangladesh Standard Time</td><td>UTC+06:00</td></tr>
+  <tr><td>Asia / Kolkata</td><td>India Standard Time</td><td>UTC+05:30</td></tr>
+  <tr><td>Asia / Dushanbe</td><td>Dushanbe Time</td><td>UTC+05:00</td></tr>
+  <tr><td>Asia / Ashgabat</td><td>Ashkhabad Standard Time</td><td>UTC+05:00</td></tr>
+  <tr><td>Asia / Karachi</td><td>Pakistan Standard Time</td><td>UTC+05:00</td></tr>
+  <tr><td>Asia / Yerevan</td><td>Yerevan Time</td><td>UTC+04:00</td></tr>
+  <tr><td>Asia / Baku</td><td>Azerbaijan Time</td><td>UTC+04:00</td></tr>
+  <tr><td>Asia / Dubai</td><td>Gulf Standard Time</td><td>UTC+04:00</td></tr>
+  <tr><td>Europe / Moscow</td><td>Moscow Standard Time</td><td>UTC+03:00</td></tr>
+  <tr><td>Europe / Minsk</td><td>Minsk Time</td><td>UTC+03:00</td></tr>
+  <tr><td>Asia / Aqaba</td><td>Arab Standard Time</td><td>UTC+02:00</td></tr>
+  <tr><td>Africa / Johannesburg</td><td>South Africa Standard Time</td><td>UTC+02:00</td></tr>
+  <tr><td>Europe / Sarajevo</td><td>Central European Time</td><td>UTC+01:00</td></tr>
+  <tr><td>Africa / Lagos</td><td>West Africa Time</td><td>UTC+01:00</td></tr>
+  <tr><td>Europe / London</td><td>Greenwich Mean Time</td><td>UTC+00:00</td></tr>
+  <tr><td>Africa / Abidjan</td><td>Côte d'Ivoire Time</td><td>UTC+00:00</td></tr>
+  <tr><td>Atlantic / Azores</td><td>Azores Standard Time</td><td>UTC−01:00</td></tr>
+  <tr><td>America / Santiago</td><td>Chile Standard Time</td><td>UTC−03:00</td></tr>
+  <tr><td>America / Buenos Aires</td><td>Argentina Time</td><td>UTC−03:00</td></tr>
+  <tr><td>America / Georgetown</td><td>Suriname Time</td><td>UTC−03:00</td></tr>
+  <tr><td>America / Caracas</td><td>Venezuela Time</td><td>UTC−04:00</td></tr>
+  <tr><td>Pacific / Tahiti</td><td>Pollard Time</td><td>UTC−09:30</td></tr>
+  <tr><td>Pacific / Honolulu</td><td>Hawaii–Aleutian Standard Time</td><td>UTC−10:00</td></tr>
 </table>
-</div>
+ </div>
             </div>
             <p><a href="index.html" class="read-more-toggle">← back to home</a></p>
           </article>
@@ -59,7 +242,6 @@
   </main>
 
   <div id="footer-slot"></div>
-
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
@@ -70,6 +252,117 @@
           a.setAttribute('target', '_blank');
           a.setAttribute('rel', 'noopener noreferrer');
         });
+      }
+      
+      // Timezone Checker functionality
+      const localTimeEl = document.getElementById('local-time');
+      const localTzNameEl = document.getElementById('local-tz-name');
+      const tzSelectEl = document.getElementById('tz-select');
+      const tzSliderEl = document.getElementById('tz-slider');
+      const tzComparisonEl = document.getElementById('tz-comparison');
+      const adjustedTimeEl = document.getElementById('adjusted-time');
+      const comparisonTimeEl = document.getElementById('comparison-time');
+      const tzHrsValue1El = document.getElementById('tz-hrs-value1');
+      const tzHrsValue2El = document.getElementById('tz-hrs-value2');
+      
+      // Time zone name mapping
+      const tzNames = {
+        'Pacific/Auckland': 'NZT UTC+12:00',
+        'Asia/Tokyo': 'JST UTC+09:00',
+        'Asia/Shanghai': 'CST UTC+08:00',
+        'Asia/Kolkata': 'IST UTC+05:30',
+        'Europe/London': 'GMT UTC+00:00',
+        'Asia/Dubai': 'GST UTC+04:00'
+      };
+      
+      // Slider: 0 = -12h, 24 = UTC, 48 = +12h (covers 24h total)
+      // Step 6 = 30 min increments (48/24 = 2 steps per hour)
+      function getHoursFromSlider(value) {
+        return value / 2 - 12; // Map 0-48 to -12 to +12
+      }
+      
+      // Update local time display
+      function updateLocalTime() {
+        const now = new Date();
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        const timeStr = new Intl.DateTimeFormat('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: timeZone
+        }).format(now);
+        
+        if (localTimeEl) localTimeEl.textContent = timeStr;
+        
+        const tzDisplay = timeZone.replace(/_/g, ' ');
+        if (localTzNameEl) localTzNameEl.textContent = tzDisplay;
+      }
+      
+      // Update adjusted time based on slider
+      function updateAdjustedTime() {
+        if (!tzSliderEl) return;
+        
+        const sliderValue = parseInt(tzSliderEl.value);
+        const hours = getHoursFromSlider(sliderValue);
+        
+        // Update value displays
+        if (tzHrsValue1El) tzHrsValue1El.textContent = hours >= 0 ? `+${hours}h` : `${hours}h`;
+        if (tzHrsValue2El) tzHrsValue2El.textContent = hours >= 0 ? `+${hours}h` : `${hours}h`;
+        
+        const now = new Date();
+        const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        const adjusted = new Date(utc.getTime() + hours * 3600000);
+        
+        const timeStr = new Intl.DateTimeFormat('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }).format(adjusted);
+        
+        if (adjustedTimeEl) adjustedTimeEl.textContent = timeStr;
+      }
+      
+      // Update comparison timezone
+      function updateComparison() {
+        const selectedTz = tzSelectEl ? tzSelectEl.value : '';
+        if (!selectedTz) {
+          if (tzComparisonEl) tzComparisonEl.style.display = 'none';
+          return;
+        }
+        
+        if (tzComparisonEl) tzComparisonEl.style.display = 'flex';
+        
+        const hours = getHoursFromSlider(parseInt(tzSliderEl.value));
+        const now = new Date();
+        const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        const adjusted = new Date(utc.getTime() + hours * 3600000);
+        
+        // Comparison timezone (also shifted by slider)
+        if (comparisonTimeEl) {
+          comparisonTimeEl.textContent = new Intl.DateTimeFormat('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: selectedTz
+          }).format(adjusted);
+        }
+      }
+      
+      // Initial update
+      updateLocalTime();
+      updateAdjustedTime();
+      
+      // Event listeners
+      setInterval(updateLocalTime, 1000);
+      if (tzSliderEl) {
+        tzSliderEl.addEventListener('input', () => {
+          updateAdjustedTime();
+          updateComparison();
+        });
+      }
+      if (tzSelectEl) {
+        tzSelectEl.addEventListener('change', updateComparison);
       }
     });
   </script>
