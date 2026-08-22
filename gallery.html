@@ -38,71 +38,78 @@
   <script src="assets/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // ---------------------------------------------------------------
-      // Gallery image list.
-      // Drop your photos into: assets/img/gallery/ + assets/img/gallery/thumbs/
-      // and add entries below, e.g.:
-      //   { src: 'assets/img/gallery/your-photo.jpg', thumb: 'assets/img/gallery/thumbs/your-photo.jpg', caption: 'somewhere nice' }
-      // ---------------------------------------------------------------
-      const images = [
-        // { src: 'assets/img/gallery/example.jpg', thumb: 'assets/img/gallery/thumbs/example.jpg', caption: 'add your photos here — edit the script in gallery.html' }
-      ];
-
       const grid = document.getElementById('gallery-grid');
       const status = document.getElementById('gallery-status');
 
-      if (images.length === 0) {
-        status.textContent = 'photos coming soon — you can drop your images into assets/img/gallery/ and add them to the list.';
-        for (let i = 0; i < 8; i++) {
-          const div = document.createElement('div');
-          div.className = 'gallery-item';
-          div.innerHTML = `<div class="gallery-placeholder"><span>📷</span><span>photo ${i + 1}</span></div>`;
-          grid.appendChild(div);
-        }
-        return;
-      }
+      fetch('assets/data/backgrounds.json')
+        .then(r => r.json())
+        .then(backgrounds => {
+          if (!backgrounds || backgrounds.length === 0) {
+            status.textContent = 'photos coming soon.';
+            return;
+          }
 
-      let currentIndex = 0;
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightbox-img');
-      const lightboxCaption = document.getElementById('lightbox-caption');
+          const images = backgrounds.map(src => {
+            // Extract a clean caption from filename
+            const filename = src.split('/').pop().replace(/\.[^/.]+$/, '');
+            let caption = filename;
+            if (/^\d{8}_\d{6}$/.test(filename)) {
+              caption = `photo taken on ${filename.substring(0, 4)}-${filename.substring(4, 6)}-${filename.substring(6, 8)}`;
+            } else {
+              caption = filename.replace(/[-_]/g, ' ');
+            }
+            return {
+              src: src,
+              thumb: src,
+              caption: caption
+            };
+          });
 
-      function openImage(index) {
-        currentIndex = (index + images.length) % images.length;
-        const img = images[currentIndex];
-        lightboxImg.src = img.src;
-        lightboxCaption.textContent = img.caption || '';
-        lightbox.classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
+          let currentIndex = 0;
+          const lightbox = document.getElementById('lightbox');
+          const lightboxImg = document.getElementById('lightbox-img');
+          const lightboxCaption = document.getElementById('lightbox-caption');
 
-      function closeLightbox() {
-        lightbox.classList.remove('open');
-        document.body.style.overflow = '';
-      }
+          function openImage(index) {
+            currentIndex = (index + images.length) % images.length;
+            const img = images[currentIndex];
+            lightboxImg.src = img.src;
+            lightboxCaption.textContent = img.caption || '';
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+          }
 
-      grid.innerHTML = images.map((img, i) => `
-        <div class="gallery-item" data-index="${i}">
-          <img src="${img.thumb || img.src}" alt="${img.caption || 'gallery image ' + (i + 1)}" loading="lazy">
-        </div>
-      `).join('');
+          function closeLightbox() {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
+          }
 
-      grid.querySelectorAll('.gallery-item').forEach(item => {
-        item.addEventListener('click', () => openImage(parseInt(item.dataset.index)));
-      });
+          grid.innerHTML = images.map((img, i) => `
+            <div class="gallery-item" data-index="${i}">
+              <img src="${img.thumb || img.src}" alt="${img.caption || 'gallery image ' + (i + 1)}" loading="lazy">
+            </div>
+          `).join('');
 
-      document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-      document.getElementById('lightbox-prev').addEventListener('click', () => openImage(currentIndex - 1));
-      document.getElementById('lightbox-next').addEventListener('click', () => openImage(currentIndex + 1));
-      lightbox.addEventListener('click', e => {
-        if (e.target === lightbox) closeLightbox();
-      });
-      document.addEventListener('keydown', e => {
-        if (!lightbox.classList.contains('open')) return;
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowLeft') openImage(currentIndex - 1);
-        if (e.key === 'ArrowRight') openImage(currentIndex + 1);
-      });
+          grid.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => openImage(parseInt(item.dataset.index)));
+          });
+
+          document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+          document.getElementById('lightbox-prev').addEventListener('click', () => openImage(currentIndex - 1));
+          document.getElementById('lightbox-next').addEventListener('click', () => openImage(currentIndex + 1));
+          lightbox.addEventListener('click', e => {
+            if (e.target === lightbox) closeLightbox();
+          });
+          document.addEventListener('keydown', e => {
+            if (!lightbox.classList.contains('open')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') openImage(currentIndex - 1);
+            if (e.key === 'ArrowRight') openImage(currentIndex + 1);
+          });
+        })
+        .catch(() => {
+          status.textContent = 'could not load gallery images.';
+        });
     });
   </script>
 </body>

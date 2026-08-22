@@ -194,7 +194,7 @@
           if (otherWrap) otherWrap.innerHTML = '<p class="text-dim">videos unavailable right now</p>';
         });
 
-      // Blog posts — appended to the same grid as the journey section
+      // Render blog posts followed by static links (gallery & holiday planner at the end)
       fetch('assets/data/blog.json')
         .then(r => r.json())
         .then(posts => {
@@ -222,7 +222,7 @@
           grid.innerHTML = blogCards + staticCardsHtml;
         })
         .catch(() => {
-          if (grid) grid.innerHTML = staticCardsHtml + '<p class="text-dim">blog posts unavailable right now</p>';
+          if (grid) grid.innerHTML = staticCardsHtml;
         });
 
       // Trips carousel — fetch and render trip cards in groups of 2 with auto-spin
