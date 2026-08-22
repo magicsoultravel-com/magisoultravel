@@ -305,10 +305,11 @@ function initOtherVideos() {
       const wrap = document.getElementById('other-videos');
       wrap.innerHTML = randomSix.map(v => `
         <div class="video-item">
-          <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer">
-            <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allowfullscreen style="pointer-events: none;"></iframe>
-            <div class="video-title">${escapeHtml(v.title)}</div>
-          </a>
+          <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
+            <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
+            <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent); text-decoration: none; white-space: nowrap;" title="Watch on YouTube">YouTube ↗</a>
+          </div>
         </div>
       `).join('');
     })

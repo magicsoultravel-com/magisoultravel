@@ -165,25 +165,31 @@
           const latest = videos.slice(0, 6);
           const remaining = videos.slice(6);
 
-          // Render latest videos (linking directly to YouTube)
+          // Render latest videos (with direct inline playback)
           if (latestWrap) {
             latestWrap.innerHTML = latest.map(v => `
-              <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer" class="video-item" style="text-decoration: none; color: inherit; display: block;">
-                <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allowfullscreen style="pointer-events: none;"></iframe>
-                <div class="video-title">${escapeHtml(v.title)}</div>
-              </a>
+              <div class="video-item">
+                <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
+                  <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
+                  <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent); text-decoration: none; white-space: nowrap;" title="Watch on YouTube">YouTube ↗</a>
+                </div>
+              </div>
             `).join('');
           }
 
-          // Render random 6 from remaining list (linking directly to YouTube)
+          // Render random 6 from remaining list (with direct inline playback)
           if (otherWrap) {
             const shuffled = [...remaining].sort(() => 0.5 - Math.random());
             const randomSix = shuffled.slice(0, 6);
             otherWrap.innerHTML = randomSix.map(v => `
-              <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer" class="video-item" style="text-decoration: none; color: inherit; display: block;">
-                <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allowfullscreen style="pointer-events: none;"></iframe>
-                <div class="video-title">${escapeHtml(v.title)}</div>
-              </a>
+              <div class="video-item">
+                <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${escapeHtml(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;">
+                  <div class="video-title" style="padding: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 8px;">${escapeHtml(v.title)}</div>
+                  <a href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent); text-decoration: none; white-space: nowrap;" title="Watch on YouTube">YouTube ↗</a>
+                </div>
+              </div>
             `).join('');
           }
         })
