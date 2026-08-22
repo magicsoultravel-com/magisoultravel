@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>magicTV - watch world TV wherever you are — blog | magic soul travel</title>
+  <meta name="description" content="Check out our applicaton to watch worldwide TV wherever you are! The app is in development and few bugs exist, current design is for desktop/laptop PC, but a mobile view is coming soon!">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div id="header-slot"></div>
+
+  <main class="page-wrapper">
+    <div class="sections-wrapper">
+      <section class="section">
+        <div id="post-container">
+          <article class="post-item expanded">
+            <span class="post-date">22 Aug 2026</span>
+            <h2>magicTV - watch world TV wherever you are</h2>
+            <div class="post-content">
+              <div class="post-full">Check out our application to watch worldwide TV wherever you are! The app is in development and few bugs exist, current design is for desktop/laptop PC, but a mobile view is coming soon!
+
+<div style="margin: 20px 0; padding: 24px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); text-align: center;">
+  <h3 style="margin-top: 0; color: var(--accent); margin-bottom: 12px;">magicTV Web App</h3>
+  <p style="margin-bottom: 20px; color: var(--text-dim);">Stream world TV channels live directly in your browser.</p>
+  <a href="https://magicsoultravel-com.github.io/magicTV/" target="_blank" rel="noopener noreferrer" class="btn" style="font-size: 1.1rem; padding: 12px 28px;">Launch magicTV ↗</a>
+</div></div>
+            </div>
+            <p><a href="index.html" class="read-more-toggle">← back to home</a></p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('post-container');
+      if (container) {
+        container.querySelectorAll('a').forEach(a => {
+          if (!a.classList.contains('btn')) {
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
