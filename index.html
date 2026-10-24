@@ -7,8 +7,68 @@
   <meta name="description" content="Magic Soul Travel — Caribbean adventures, flight tracks, carnival mood, island hopping and travel planning.">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
   <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Handwriting font for the loading screen welcome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- Loading screen: real progress bar + handwritten welcome + quick links -->
+  <div id="app-loader" class="app-loader" aria-hidden="true">
+    <div class="loader-inner">
+      <h1 class="loader-title" aria-label="welcome to magic soul travel">
+        <span class="lt" style="--d:.00s">w</span><span class="lt" style="--d:.04s">e</span><span class="lt" style="--d:.08s">l</span><span class="lt" style="--d:.12s">c</span><span class="lt" style="--d:.16s">o</span><span class="lt" style="--d:.20s">m</span><span class="lt" style="--d:.24s">e</span>
+        <span class="lw marg"></span>
+        <span class="lt" style="--d:.32s">t</span><span class="lt" style="--d:.36s">o</span>
+        <span class="lw marg"></span>
+        <span class="lt" style="--d:.40s">m</span><span class="lt" style="--d:.44s">a</span><span class="lt" style="--d:.48s">g</span><span class="lt" style="--d:.52s">i</span><span class="lt" style="--d:.56s">c</span>
+        <span class="lw marg"></span>
+        <span class="lt" style="--d:.64s">s</span><span class="lt" style="--d:.68s">o</span><span class="lt" style="--d:.72s">u</span><span class="lt" style="--d:.76s">l</span>
+        <span class="lw marg"></span>
+        <span class="lt" style="--d:.84s">t</span><span class="lt" style="--d:.88s">r</span><span class="lt" style="--d:.92s">a</span><span class="lt" style="--d:.96s">v</span><span class="lt" style="--d:1.00s">e</span><span class="lt" style="--d:1.04s">l</span>
+        <span class="lw marg"></span>
+        <span class="lt" style="--d:1.08s">s</span><span class="lt" style="--d:1.12s">p</span><span class="lt" style="--d:1.16s">i</span><span class="lt" style="--d:1.20s">r</span><span class="lt" style="--d:1.24s">i</span><span class="lt" style="--d:1.28s">t</span>
+      </h1>
+      <svg class="loader-underline" viewBox="0 0 320 24" aria-hidden="true">
+        <path class="swoosh" d="M24,17 C 70,14 116,18 162,13 208,16 254,12 296,15" stroke="var(--accent)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        <circle class="ink" cx="296" cy="15" r="4" fill="var(--accent)" />
+      </svg>
+
+      <nav class="loader-links" aria-label="quick links">
+        <a class="load-link" href="https://www.youtube.com/@magicsoultravel" target="_blank" rel="noopener noreferrer">
+          <span class="link-badge">▶</span><span class="link-text">youtube channel<span class="link-sub">watch the latest</span></span>
+        </a>
+        <a class="load-link" href="post-magictv-watch-world-tv-wherever-you-are.html">
+          <span class="link-badge">✦</span><span class="link-text">first of the journey<span class="link-sub">magicTV — watch world tv</span></span>
+        </a>
+        <a class="load-link" href="trip-saint-lucia-to-martinique-ferry.html">
+          <span class="link-badge">⛵</span><span class="link-text">first trip<span class="link-sub">saint lucia → martinique ferry</span></span>
+        </a>
+      </nav>
+
+      <!-- one playable tile from the channel (opens in the floating window) -->
+      <button class="loader-video" id="loader-video" type="button" hidden aria-label="play the latest video">
+        <span class="loader-video-poster" data-video-poster aria-hidden="true">
+          <span class="loader-video-glow" aria-hidden="true"></span>
+          <span class="loader-video-play" data-video-open aria-hidden="true">▶</span>
+        </span>
+        <span class="loader-video-text">
+          <span class="loader-video-eyebrow">from the channel</span>
+          <span class="loader-video-title" data-video-title>holding…</span>
+        </span>
+      </button>
+
+      <div class="loader-progress">
+        <div class="loader-track"><div class="loader-fill"></div></div>
+        <div class="loader-meta"><span class="loader-stage">warming up…</span><span class="loader-pct">0%</span></div>
+      </div>
+
+      <button class="loader-enter" id="loader-enter" type="button" hidden disabled aria-hidden="true">
+        enter site ✦
+      </button>
+    </div>
+  </div>
 
   <!-- Header injected by layout.js -->
   <div id="header-slot"></div>
@@ -72,6 +132,7 @@
   <!-- Footer injected by layout.js -->
   <div id="footer-slot"></div>
 
+  <script src="assets/js/loading-screen.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/gpx-maps.js"></script>
@@ -145,6 +206,8 @@
           return obj;
         });
       };
+
+      window.MST_LOADER && window.MST_LOADER.register('videos', 34, 'loading the channel…');
 
       fetch('assets/data/Magic-Soul-Travel.csv')
         .then(r => r.text())
@@ -367,15 +430,22 @@
               });
             });
           }
+          // Surface the newest video as a playable tile on the loading screen.
+          if (latest.length && window.MST_LOADER) {
+            window.MST_LOADER.setVideo({ videoId: latest[0].videoId, title: latest[0].title }, openFloatingPiP);
+          }
+          window.MST_LOADER && window.MST_LOADER.done('videos');
         })
         .catch(() => {
           const latestWrap = document.getElementById('index-videos');
           const otherWrap = document.getElementById('other-videos');
           if (latestWrap) latestWrap.innerHTML = '<p class="text-dim">videos unavailable right now</p>';
           if (otherWrap) otherWrap.innerHTML = '<p class="text-dim">videos unavailable right now</p>';
+          window.MST_LOADER && window.MST_LOADER.done('videos');
         });
 
       // Render blog posts followed by static links (gallery & holiday planner at the end)
+      window.MST_LOADER && window.MST_LOADER.register('journey', 33, 'packing the journey…');
       fetch('assets/data/blog.json')
         .then(r => r.json())
         .then(posts => {
@@ -401,12 +471,15 @@
           `;
           }).join('');
           grid.innerHTML = blogCards + staticCardsHtml;
+          window.MST_LOADER && window.MST_LOADER.done('journey');
         })
         .catch(() => {
           if (grid) grid.innerHTML = staticCardsHtml;
+          window.MST_LOADER && window.MST_LOADER.done('journey');
         });
 
       // Trips carousel — fetch and render trip cards in groups of 2 with auto-spin
+      window.MST_LOADER && window.MST_LOADER.register('trips', 33, 'plotting the trips…');
       fetch('assets/data/trips.json')
         .then(r => r.json())
         .then(trips => {
@@ -549,12 +622,14 @@
 
           document.addEventListener('mouseup', endDrag);
           carouselContainer.addEventListener('mouseleave', endDrag);
+        window.MST_LOADER && window.MST_LOADER.done('trips');
         })
         .catch(() => {
           const carouselContainer = document.getElementById('trip-carousel');
           if (carouselContainer) {
             carouselContainer.innerHTML = '<p class="text-dim" style="padding:20px">trips unavailable right now</p>';
           }
+          window.MST_LOADER && window.MST_LOADER.done('trips');
         });
     });
   </script>

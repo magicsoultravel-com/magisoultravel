@@ -245,10 +245,15 @@ function initBackgroundSlideshow() {
 
   document.body.insertBefore(slideshow, document.body.firstChild);
 
+  if (window.MST_LOADER) window.MST_LOADER.register('backdrops', 8, 'warming the backdrop…');
+
   fetch('assets/data/backgrounds.json')
     .then(r => r.json())
     .then(images => {
-      if (!images || images.length === 0) return;
+      if (!images || images.length === 0) {
+        if (window.MST_LOADER) window.MST_LOADER.done('backdrops');
+        return;
+      }
 
       let shuffled = shuffleArray(images);
       let currentIdx = 0;
@@ -257,8 +262,20 @@ function initBackgroundSlideshow() {
       let inactiveLayer = layer2;
 
       // Show first (random) image immediately
-      activeLayer.style.backgroundImage = `url('${shuffled[currentIdx]}')`;
+      const firstImage = shuffled[currentIdx];
+      activeLayer.style.backgroundImage = `url('${firstImage}')`;
       activeLayer.classList.add('active');
+
+      // The progress bar should honestly wait until that first backdrop image has
+      // actually downloaded — not just until the JSON of image URLs was parsed.
+      if (window.MST_LOADER) {
+        window.MST_LOADER.register('backdrop-img', 22, 'painting the clouds…');
+        const probe = new Image();
+        const markBackdrop = () => window.MST_LOADER.done('backdrop-img');
+        probe.onload = markBackdrop;
+        probe.onerror = markBackdrop;
+        probe.src = firstImage;
+      }
 
       function navigate(direction) {
         currentIdx = (currentIdx + direction + shuffled.length) % shuffled.length;
@@ -282,8 +299,10 @@ function initBackgroundSlideshow() {
 
       // Auto-rotate every 60 seconds
       setInterval(() => navigate(1), 60000);
+      if (window.MST_LOADER) window.MST_LOADER.done('backdrops');
     })
     .catch(() => {
+      if (window.MST_LOADER) window.MST_LOADER.done('backdrops');
       // No background slideshow — silently skip
     });
 }
@@ -351,5 +370,10 @@ window.MST = {
   escapeHtml,
   formatDate,
   showLoading,
-  shuffleArray
+  shuffleArray,
+  skipLoader: () => {
+    if (window.MST_LOADER && !document.getElementById('app-loader').classList.contains('loaded')) {
+      window.MST_LOADER.skipLoader();
+    }
+  }
 };

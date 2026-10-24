@@ -38,6 +38,9 @@ const MST_MAPS = {
       }
 
       this.leafletPromise = new Promise((res) => {
+        // The map library is a real external load — let the progress bar count it.
+        if (window.MST_LOADER) window.MST_LOADER.register('maps-lib', 10, 'laying the maps…');
+
         // Load Leaflet CSS
         if (!document.querySelector('link[href*="leaflet"]')) {
           const link = document.createElement('link');
@@ -49,8 +52,9 @@ const MST_MAPS = {
         // Load Leaflet JS
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.onload = () => res();
+        script.onload = () => { if (window.MST_LOADER) window.MST_LOADER.done('maps-lib'); res(); };
         script.onerror = () => {
+          if (window.MST_LOADER) window.MST_LOADER.done('maps-lib');
           document.querySelectorAll('.gpx-map').forEach(el => {
             el.innerHTML = '<p style="color:#e74c3c; padding:20px;">Failed to load maps. Check your connection.</p>';
           });
