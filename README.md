@@ -8,10 +8,10 @@ A static travel site built for GitHub Pages — Caribbean adventures, flight tra
 ├── index.html          # home — journey cards (trips, gallery, videos, planner + blog posts), latest videos
 ├── post.html           # individual blog post page (post.html?id=<post-id>)
 ├── trips.html          # GPX flight tracks rendered on Leaflet.js
+├── all-videos.html     # full video catalog (filters, tile/list views) from Magic-Soul-Travel.csv
 ├── gallery.html        # photo gallery with lightbox
 ├── blog.html           # redirects to index.html (blog posts are now in the journey grid)
 ├── calendar.html       # holiday planner — colour-coded calendar (saves in your browser)
-├── videos.html         # YouTube embeds from the channel
 ├── 404.html            # custom 404
 ├── assets/
 │   ├── css/style.css
@@ -45,7 +45,7 @@ python3 -m http.server 8000
 
 ## Updating content
 
-- **Videos** — edit `assets/data/videos.json` with your latest YouTube video IDs.
+- **Videos** — canonical catalog is `assets/data/Magic-Soul-Travel.csv` (read by `index.html` and `all-videos.html`); `assets/data/videos.json` must be kept in sync (used by the home “other videos” grid). Refresh both from the YouTube channel (see `AGENTS.md` → “Refreshing the video lists”); edit manually only for small tweaks.
 - **Trips** — add a `.gpx` file to `assets/gpx/` and an entry to `assets/data/trips.json`.
 - **Blog** — edit `assets/data/blog.json` (array of `{ id, date, title, content }`).
 - **Background** — drop images into `assets/img/backgrounds/` and add entries to `assets/data/backgrounds.json`. Images rotate every 60 seconds with a smooth crossfade; left/right arrows let you navigate manually.
